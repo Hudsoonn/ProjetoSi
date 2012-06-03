@@ -1,0 +1,116 @@
+<list>
+  <sistemadecaronas.projSi1.sistema.Usuario>
+    <login>Hudson</login>
+    <senha>123</senha>
+    <nome>Hudson Daniel</nome>
+    <endereco>edesio silva</endereco>
+    <email>hudson@gmail.com</email>
+    <id>a7b52559-e7c7-4191-99ee-ebdeace46eba</id>
+    <listaDeCaronasQueParticipa/>
+    <listaDeCaronasDoUsuario>
+      <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
+        <TIPO__CARONA>InterMunicipal</TIPO__CARONA>
+        <donoDaCarona reference="../../.."/>
+        <listaDeSolicitacaoAceitas>
+          <sistemadecaronas.projSi1.sistema.Solicitacao>
+            <idSessao>b0256ae6-41ee-4020-ad31-37b3c552a3cf</idSessao>
+            <idCarona>559a6118-6b6f-46d7-b0ff-632d86c1b292</idCarona>
+            <ponto>centro</ponto>
+            <idSolicitacao>d4b123ef-515e-4946-8da4-dbe6070f4a67</idSolicitacao>
+          </sistemadecaronas.projSi1.sistema.Solicitacao>
+        </listaDeSolicitacaoAceitas>
+        <listaDeSugestoes>
+          <sistemadecaronas.projSi1.sistema.Sugestao>
+            <pontos>alto branco</pontos>
+            <idSugestao>ab0c59dc-cc2d-487e-a546-dd5cbc919171</idSugestao>
+            <idSessao>b0256ae6-41ee-4020-ad31-37b3c552a3cf</idSessao>
+            <listaDeResposta>
+              <sistemadecaronas.projSi1.sistema.Resposta>
+                <idResposta>0a93e016-08ac-4b46-964d-4d7c8ed8b18c</idResposta>
+                <pontos>alto branco</pontos>
+              </sistemadecaronas.projSi1.sistema.Resposta>
+            </listaDeResposta>
+          </sistemadecaronas.projSi1.sistema.Sugestao>
+          <sistemadecaronas.projSi1.sistema.Sugestao>
+            <pontos>centro</pontos>
+            <idSugestao>6d534d46-2ed5-4555-bbcc-e5f21618424d</idSugestao>
+            <idSessao>b0256ae6-41ee-4020-ad31-37b3c552a3cf</idSessao>
+            <listaDeResposta>
+              <sistemadecaronas.projSi1.sistema.Resposta>
+                <idResposta>86e7b977-0bcf-40e7-9dd8-ad84bbbe1be8</idResposta>
+                <pontos>parque da crianca</pontos>
+              </sistemadecaronas.projSi1.sistema.Resposta>
+            </listaDeResposta>
+          </sistemadecaronas.projSi1.sistema.Sugestao>
+        </listaDeSugestoes>
+        <listaDeSolicitacao/>
+        <listaDeParticipantes>
+          <sistemadecaronas.projSi1.sistema.Usuario>
+            <login>Hudson2</login>
+            <senha>123</senha>
+            <nome>Hudson Daniel</nome>
+            <endereco>edesio silva</endereco>
+            <email>hudson@gmaill.com</email>
+            <id>b0256ae6-41ee-4020-ad31-37b3c552a3cf</id>
+            <listaDeCaronasQueParticipa/>
+            <listaDeCaronasDoUsuario/>
+            <listaDeMensagens/>
+            <presencaEmCaronas>0</presencaEmCaronas>
+            <faltasEmCaronas>1</faltasEmCaronas>
+            <caronasNaoFuncionaram>0</caronasNaoFuncionaram>
+            <caronasSeguras>0</caronasSeguras>
+            <historicoVagasEmCaronas/>
+            <historicoCaronas/>
+          </sistemadecaronas.projSi1.sistema.Usuario>
+        </listaDeParticipantes>
+        <origem>campina</origem>
+        <destino>Caruaru</destino>
+        <data>20/03/2013</data>
+        <hora>15:00</hora>
+        <idDaCarona>559a6118-6b6f-46d7-b0ff-632d86c1b292</idDaCarona>
+        <vagas>1</vagas>
+        <pontoDeEncontro>
+          <sistemadecaronas.projSi1.sistema.PontoDeEncontro>
+            <usuario reference="../../../../.."/>
+            <ponto>centro</ponto>
+          </sistemadecaronas.projSi1.sistema.PontoDeEncontro>
+          <sistemadecaronas.projSi1.sistema.PontoDeEncontro>
+            <usuario reference="../../../../.."/>
+            <ponto>parque da crianca</ponto>
+          </sistemadecaronas.projSi1.sistema.PontoDeEncontro>
+          <sistemadecaronas.projSi1.sistema.PontoDeEncontro>
+            <usuario reference="../../../../.."/>
+            <ponto>centro</ponto>
+          </sistemadecaronas.projSi1.sistema.PontoDeEncontro>
+        </pontoDeEncontro>
+      </sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
+    </listaDeCaronasDoUsuario>
+    <listaDeMensagens/>
+    <presencaEmCaronas>0</presencaEmCaronas>
+    <faltasEmCaronas>0</faltasEmCaronas>
+    <caronasNaoFuncionaram>0</caronasNaoFuncionaram>
+    <caronasSeguras>0</caronasSeguras>
+    <historicoVagasEmCaronas/>
+    <historicoCaronas/>
+  </sistemadecaronas.projSi1.sistema.Usuario>
+  <sistemadecaronas.projSi1.sistema.Usuario reference="../sistemadecaronas.projSi1.sistema.Usuario/listaDeCaronasDoUsuario/sistemadecaronas.projSi1.sistema.CaronaIntermunicipal/listaDeParticipantes/sistemadecaronas.projSi1.sistema.Usuario"/>
+  <sistemadecaronas.projSi1.sistema.Usuario>
+    <login>Hudson3</login>
+    <senha>123</senha>
+    <nome>Hudson Daniel</nome>
+    <endereco>edesio silva</endereco>
+    <email>hudson@gmailll.com</email>
+    <id>c7bbfed9-bdcc-40a3-9953-7efde5a0e0ed</id>
+    <listaDeCaronasQueParticipa/>
+    <listaDeCaronasDoUsuario/>
+    <listaDeMensagens>
+      <string>Carona cadastrada no dia 20/03/2013, Às 15:00 de acordo com os seus interesses registrados. Entrar em contato com hudson@gmail.com</string>
+    </listaDeMensagens>
+    <presencaEmCaronas>0</presencaEmCaronas>
+    <faltasEmCaronas>0</faltasEmCaronas>
+    <caronasNaoFuncionaram>0</caronasNaoFuncionaram>
+    <caronasSeguras>0</caronasSeguras>
+    <historicoVagasEmCaronas/>
+    <historicoCaronas/>
+  </sistemadecaronas.projSi1.sistema.Usuario>
+</list>
