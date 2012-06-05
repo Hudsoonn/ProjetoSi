@@ -7,7 +7,7 @@
       <nome>Hudson Daniel</nome>
       <endereco>edesio silva</endereco>
       <email>hudson@gmail.com</email>
-      <id>a7b52559-e7c7-4191-99ee-ebdeace46eba</id>
+      <id>201d3f0e-0429-4bc8-afd9-b704c8b9e257</id>
       <listaDeCaronasQueParticipa/>
       <listaDeCaronasDoUsuario>
         <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal reference="../../.."/>
@@ -22,34 +22,24 @@
     </donoDaCarona>
     <listaDeSolicitacaoAceitas>
       <sistemadecaronas.projSi1.sistema.Solicitacao>
-        <idSessao>b0256ae6-41ee-4020-ad31-37b3c552a3cf</idSessao>
-        <idCarona>559a6118-6b6f-46d7-b0ff-632d86c1b292</idCarona>
+        <idSessao>8211de30-1d19-4928-a7c1-c8fdae5cb629</idSessao>
+        <idCarona>f0c04107-ea40-4aed-bd04-a46474708f4f</idCarona>
         <ponto>centro</ponto>
-        <idSolicitacao>d4b123ef-515e-4946-8da4-dbe6070f4a67</idSolicitacao>
+        <idSolicitacao>90cfc4d1-b380-4fa9-b9fb-bb3fde9cd87f</idSolicitacao>
       </sistemadecaronas.projSi1.sistema.Solicitacao>
     </listaDeSolicitacaoAceitas>
     <listaDeSugestoes>
       <sistemadecaronas.projSi1.sistema.Sugestao>
         <pontos>alto branco</pontos>
-        <idSugestao>ab0c59dc-cc2d-487e-a546-dd5cbc919171</idSugestao>
-        <idSessao>b0256ae6-41ee-4020-ad31-37b3c552a3cf</idSessao>
-        <listaDeResposta>
-          <sistemadecaronas.projSi1.sistema.Resposta>
-            <idResposta>0a93e016-08ac-4b46-964d-4d7c8ed8b18c</idResposta>
-            <pontos>alto branco</pontos>
-          </sistemadecaronas.projSi1.sistema.Resposta>
-        </listaDeResposta>
+        <idSugestao>f493f614-111f-426f-9992-5f15a5f60f0c</idSugestao>
+        <idSessao>8211de30-1d19-4928-a7c1-c8fdae5cb629</idSessao>
+        <listaDeResposta/>
       </sistemadecaronas.projSi1.sistema.Sugestao>
       <sistemadecaronas.projSi1.sistema.Sugestao>
         <pontos>centro</pontos>
-        <idSugestao>6d534d46-2ed5-4555-bbcc-e5f21618424d</idSugestao>
-        <idSessao>b0256ae6-41ee-4020-ad31-37b3c552a3cf</idSessao>
-        <listaDeResposta>
-          <sistemadecaronas.projSi1.sistema.Resposta>
-            <idResposta>86e7b977-0bcf-40e7-9dd8-ad84bbbe1be8</idResposta>
-            <pontos>parque da crianca</pontos>
-          </sistemadecaronas.projSi1.sistema.Resposta>
-        </listaDeResposta>
+        <idSugestao>6bd59010-9417-4f2e-a948-0aff26f46faf</idSugestao>
+        <idSessao>8211de30-1d19-4928-a7c1-c8fdae5cb629</idSessao>
+        <listaDeResposta/>
       </sistemadecaronas.projSi1.sistema.Sugestao>
     </listaDeSugestoes>
     <listaDeSolicitacao/>
@@ -60,7 +50,7 @@
         <nome>Hudson Daniel</nome>
         <endereco>edesio silva</endereco>
         <email>hudson@gmaill.com</email>
-        <id>b0256ae6-41ee-4020-ad31-37b3c552a3cf</id>
+        <id>8211de30-1d19-4928-a7c1-c8fdae5cb629</id>
         <listaDeCaronasQueParticipa/>
         <listaDeCaronasDoUsuario/>
         <listaDeMensagens/>
@@ -76,7 +66,7 @@
     <destino>Caruaru</destino>
     <data>20/03/2013</data>
     <hora>15:00</hora>
-    <idDaCarona>559a6118-6b6f-46d7-b0ff-632d86c1b292</idDaCarona>
+    <idDaCarona>f0c04107-ea40-4aed-bd04-a46474708f4f</idDaCarona>
     <vagas>1</vagas>
     <pontoDeEncontro>
       <sistemadecaronas.projSi1.sistema.PontoDeEncontro>

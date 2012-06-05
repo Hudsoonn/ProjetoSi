@@ -152,7 +152,13 @@ public class CaronaMunicipal implements Carona{
 	
 	public void removePontoDeEncontro(PontoDeEncontro ponto)
 	{
-		pontoDeEncontro.remove(ponto);
+		for (PontoDeEncontro pontoEncontro : pontoDeEncontro) {
+			if (pontoEncontro.getUsuario().getLogin().equals(ponto.getUsuario().getLogin() ) && pontoEncontro.getPonto().equals(ponto.getPonto())) {
+				pontoDeEncontro.remove(ponto);	
+				break;
+			}
+		}
+
 	}
 
 	public String tipoDeCarona() {

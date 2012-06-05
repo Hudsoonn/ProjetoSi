@@ -2,7 +2,9 @@ package sistemasdecaronas.projSi1.testes;
 
 import static org.junit.Assert.*;
 
+import java.awt.HeadlessException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -11,13 +13,16 @@ import java.util.List;
 import org.junit.*;
 
 import sistemadecaronas.projSi1.sistema.Carona;
+import sistemadecaronas.projSi1.sistema.PontoDeEncontro;
 import sistemadecaronas.projSi1.sistema.SistemaDeCarona;
+import sistemadecaronas.projSi1.sistema.SistemaDeCarona2;
 import sistemadecaronas.projSi1.sistema.Solicitacao;
 import sistemadecaronas.projSi1.sistema.Sugestao;
+import sistemadecaronas.projSi1.sistema.Usuario;
 
 public class TesteSistema {
 
-	SistemaDeCarona sistema;
+	SistemaDeCarona2 sistema;
 	String sessaoMark;
 	String sessaoSteve;
 	String sessaoBill;
@@ -26,7 +31,7 @@ public class TesteSistema {
 
 	@Before
 	public void antes() throws Exception {
-		sistema = new SistemaDeCarona();
+		sistema = SistemaDeCarona2.getInstanceOf();
 		sistema.criarUsuario("mark", "m@rk", "Mark Zuckerberg",
 				"Palo Alto, California", "mark@facebook.com");
 		sistema.criarUsuario("steve", "5t3v3", "Steven Paul Jobs",
@@ -58,13 +63,14 @@ public class TesteSistema {
 
 	@After
 	public void depois() throws Exception {
+		sistema.zerarSistema();
 	}
 
 	@Test
 	public void testeLista() throws Exception {
 		// adicionou os 3 mark , steave e bill
 		assertEquals(3, sistema.getUsuarios().size());
-
+        
 	}
 
 	@Test
@@ -161,15 +167,25 @@ public class TesteSistema {
 		 assertEquals(new ArrayList<String>(), sistema.buscaCaronaID(idCarona4).getPontoDeEncontro());
 		 
 		 Carona carona = sistema.buscaCaronaID(idCarona4);
-		 carona.addPontoDeEncontro("parque da crianca");
+		 carona.addPontoDeEncontro(new PontoDeEncontro(carona.getDonoDaCarona(),"parque da crianca"));
 		 
-		 List<String> resp = new ArrayList<String>();
-		 resp.add("parque da crianca");
+		 List<String> respEsperada = new ArrayList<String>();
+		 respEsperada.add("parque da crianca");
 		 
-		 assertEquals(resp, sistema.buscaCaronaID(idCarona4).getPontoDeEncontro());
-		 carona.addPontoDeEncontro("acude");
-		 resp.add("acude");
-		 assertEquals(resp, sistema.buscaCaronaID(idCarona4).getPontoDeEncontro());
+		 
+		 assertEquals(1, carona.getPontoDeEncontro().size());
+		 carona.addPontoDeEncontro(new PontoDeEncontro(carona.getDonoDaCarona(), "acude"));
+		 respEsperada.add("acude");
+		 assertEquals(2, carona.getPontoDeEncontro().size());
+		 
+		 List<String> resposta = new LinkedList<String>();
+		 for (PontoDeEncontro objetoPonto : carona.getPontoDeEncontro()) {
+			 
+			 resposta.add(objetoPonto.getPonto());			 
+			
+		}
+		 
+		 assertEquals(respEsperada, resposta);
 		 
 	}
 
@@ -223,19 +239,28 @@ public class TesteSistema {
 	public void sugerirPontoEncontro() throws Exception {
 		Carona carona = sistema.buscaCaronaID(idCarona4);
 		assertEquals(0, carona.getSugestoes().size());
+		String idSolitacao = sistema.solicitarVaga(sessaoBill, idCarona4);
+		sistema.aceitarSolicitacao(sessaoMark, idSolitacao);
 		sistema.sugerirPontoEncontro(sessaoBill, idCarona4, "acude");
 		assertEquals(1, carona.getSugestoes().size());
 	}
 
 	@Test
 	public void testaResponderSugestaoPontoEncontro() throws Exception {
+		
+		String idSolicitacao = sistema.solicitarVaga(sessaoBill, idCarona4);
+		sistema.aceitarSolicitacao(sessaoMark, idSolicitacao);
+		
 		String idSugestao = sistema.sugerirPontoEncontro(sessaoBill, idCarona4,
-				"acude");
+				"acude");	
 		Sugestao sugestao = sistema.buscaSugestao(idSugestao, idCarona4);
 		assertEquals(0, sugestao.getlistaDeResposta().size());
 		sistema.responderSugestaoPontoEncontro(sessaoMark, idCarona4,
 				idSugestao, "Parque Crianca");
-		assertEquals(1, sugestao.getlistaDeResposta().size());
+		
+		assertEquals(1,sistema.buscaCaronaID(idCarona4).getPontoDeEncontro().size());
+		assertEquals("Parque Crianca",sistema.buscaCaronaID(idCarona4).getPontoDeEncontro().get(0).getPonto() );
+	
 	}
 
 	@Test
@@ -244,15 +269,18 @@ public class TesteSistema {
 		  e ele pode solicitar vaga em acude tranquilo que é um ponto sugerido
 		  nao é um ponto aceito.. nao entendi
 		 */
-		String idSugestao = sistema.sugerirPontoEncontro(sessaoBill, idCarona4,
-				"acude");
-		sistema.responderSugestaoPontoEncontro(sessaoMark, idCarona4,
-				idSugestao, "Parque Crianca");
-		sistema.solicitarVagaPontoEncontro(sessaoBill, idCarona4, "Parque Crianca");
+		
+		Carona carona = sistema.buscaCaronaID(idCarona4);
+		carona.addPontoDeEncontro(new PontoDeEncontro(sistema.buscaUsuario("mark"), "centro"));
+		
+		sistema.solicitarVagaPontoEncontro(sessaoBill, idCarona4, "centro");
+		assertEquals("centro", carona.getPontoDeEncontro().get(0).getPonto());
+		
+		
 	}
 
 	@Test
-	public void testaSolicitarVaga() {
+	public void testaSolicitarVaga() throws Exception {
 		sistema.solicitarVaga(sessaoBill, idCarona4);
 		Carona carona = sistema.buscaCaronaID(idCarona4);
 		assertEquals(1, carona.getListaDeSolicitacao().size());
@@ -288,12 +316,175 @@ public class TesteSistema {
 
 	@Test
 	public void testaAceitarSolicitacaoPontoEncontro() throws Exception {
-	
-		String idSugestao = sistema.sugerirPontoEncontro(sessaoBill, idCarona4, "acude");
-		sistema.responderSugestaoPontoEncontro(sessaoMark, idCarona4, idSugestao, "acude");
-		String idSolicitacao = sistema.solicitarVagaPontoEncontro(sessaoBill, idCarona4, "acude");
-		sistema.aceitarSolicitacaoPontoEncontro(sessaoMark, idSolicitacao);
+	    
+		
+		Carona carona = sistema.buscaCaronaID(idCarona4);
+        int numeroDeVagas = carona.getVagas();
+		carona.addPontoDeEncontro(new PontoDeEncontro(sistema.buscaUsuario("mark"),"acude"));
+
+		String idSolicitacao = sistema.solicitarVagaPontoEncontro(sessaoBill, idCarona4,"acude");
+		sistema.aceitarSolicitacao(sessaoMark, idSolicitacao);
+		
+		assertEquals(carona.getVagas(), numeroDeVagas-1);
+		
 	}
+	
+	@Test
+	public void testaCancelarCarona() throws Exception{
+		int numeroDeCaronas = sistema.listaDeCaronas.size();
+		Usuario usuario = sistema.buscaUsuario("mark");
+		int caronasDoUsuario = usuario.getListaDeCaronasDoUsuario().size();
+		
+		sistema.cancelarCarona(sessaoMark, idCarona4);
+		
+		assertEquals(sistema.listaDeCaronas.size(), numeroDeCaronas-1);
+		assertEquals(usuario.getListaDeCaronasDoUsuario().size(),caronasDoUsuario-1);
+	}
+	
+	@Test
+	public void testaRejeitarSolicitacao() throws Exception{
+		
+		String idSolicitacao = sistema.solicitarVaga(sessaoSteve, idCarona5);
+		Carona carona = sistema.buscaCaronaID(idCarona5);
+		assertEquals(1,carona.getListaDeSolicitacao().size());
+		sistema.rejeitarSolicitacao(sessaoMark, idSolicitacao);
+		assertEquals(0,carona.getListaDeSolicitacao().size());
+		
+	}
+	
+	@Test
+	public void testaDesistirRequisicao() throws Exception{
+		
+        Usuario caroneiro = sistema.buscaUsuario("bill");
+		Carona carona = sistema.buscaCaronaID(idCarona5);
+		
+		String idSolicitacao = sistema.solicitarVaga(sessaoBill, idCarona5);
+		
+		assertEquals(1, carona.getListaDeSolicitacao().size());
+		
+		int numVagasCarona = carona.getVagas();
+		sistema.aceitarSolicitacao(sessaoMark, idSolicitacao);
+		
+		assertEquals(carona.getVagas(), numVagasCarona-1);
+		assertEquals(1, caroneiro.getListaDeCaronasQueParticipa().size());
+		assertEquals(0, carona.getListaDeSolicitacao().size());
+		
+		sistema.desistirRequisicao(sessaoBill, idCarona5);
+
+		assertEquals(0, caroneiro.getListaDeCaronasQueParticipa().size());
+		assertEquals(carona.getVagas(), numVagasCarona);
+		
+		
+	}
+	
+	@Test
+	public void testaDeletarPontoDeEncontro() throws Exception{
+		
+		Carona carona = sistema.buscaCaronaID(idCarona4);
+		Usuario donoCarona = sistema.buscaUsuario("mark");
+		
+		PontoDeEncontro ponto = new PontoDeEncontro(donoCarona, "acude");
+		carona.addPontoDeEncontro(ponto);
+		
+		assertEquals(1, carona.getPontoDeEncontro().size());
+		
+		sistema.deletarPontoDeEncontro(sessaoMark, idCarona4, ponto);
+		
+		assertEquals(0, carona.getPontoDeEncontro().size());
+	
+	}
+	
+	@Test
+	public void TestaReviewCarona() throws Exception{
+		
+		Carona carona = sistema.buscaCaronaID(idCarona4);
+		
+		Usuario caroneiro = sistema.buscaUsuario("bill");
+		Usuario donoDaCarona = sistema.buscaUsuario("mark");
+		Usuario caroneiro2 = sistema.buscaUsuario("steve");
+		
+		String idSolicitacao = sistema.solicitarVaga(sessaoBill, idCarona4);
+		sistema.aceitarSolicitacao(sessaoMark, idSolicitacao);
+		
+		String idSolicitacao2 = sistema.solicitarVaga(sessaoSteve, idCarona4);
+		sistema.aceitarSolicitacao(sessaoMark, idSolicitacao2);
+		
+		
+		assertEquals(2, carona.getListaDeParticipantes().size());
+		assertEquals(2, sistema.listaDeCaronas.size());
+		assertEquals(0, caroneiro.getFaltasEmCaronas());
+		assertEquals(0, caroneiro.getHistoricoCaronas().size());
+		assertEquals(0, caroneiro.getHistoricoVagasEmCaronas().size());
+		assertEquals(0, caroneiro.getPresencaEmCaronas());
+		
+		assertEquals(0, caroneiro2.getFaltasEmCaronas());
+		assertEquals(0, caroneiro2.getHistoricoCaronas().size());
+		assertEquals(0, caroneiro2.getHistoricoVagasEmCaronas().size());
+		assertEquals(0, caroneiro2.getPresencaEmCaronas());
+		
+		assertEquals(0, donoDaCarona.getCaronasNaoFuncionaram());
+		assertEquals(0, donoDaCarona.getCaronasSeguras());
+		assertEquals(0, donoDaCarona.getHistoricoCaronas().size());
+		assertEquals(0, donoDaCarona.getHistoricoVagasEmCaronas().size());
+		
+		sistema.reviewCarona(sessaoBill, idCarona4, "segura e tranquila");
+		
+		assertEquals(0, donoDaCarona.getCaronasNaoFuncionaram());
+		assertEquals(1, donoDaCarona.getCaronasSeguras());
+		assertEquals(1, donoDaCarona.getHistoricoCaronas().size());
+		assertEquals(0, donoDaCarona.getHistoricoVagasEmCaronas().size());
+		
+		sistema.reviewVagaEmCarona(sessaoMark, idCarona4, "bill", "não faltou");
+		
+		assertEquals(0, caroneiro.getFaltasEmCaronas());
+		assertEquals(0, caroneiro.getHistoricoCaronas().size());
+		assertEquals(1, caroneiro.getHistoricoVagasEmCaronas().size());
+		assertEquals(1, caroneiro.getPresencaEmCaronas());
+		
+		sistema.reviewVagaEmCarona(sessaoMark, idCarona4, "steve", "faltou");
+		
+		assertEquals(1, caroneiro2.getFaltasEmCaronas());
+		assertEquals(0, caroneiro2.getHistoricoCaronas().size());
+		assertEquals(0, caroneiro2.getHistoricoVagasEmCaronas().size());
+		assertEquals(0, caroneiro2.getPresencaEmCaronas());
+		
+		
+		
+	}
+	
+	@Test
+	public void testaCadastrarInteresse() throws Exception{
+		
+		Usuario caroneiro = sistema.buscaUsuario("bill");
+		
+		sistema.cadastrarInteresse(sessaoBill, "", "", "", "", "");
+		
+		assertEquals(0, caroneiro.getListaDeMensagens().size());
+		
+		sistema.cadastrarCarona(sessaoMark, "Campina Grande", "João Pessoa", "15/06/2012", "15:00", "4");
+		
+		assertEquals(1, caroneiro.getListaDeMensagens().size());
+		
+		sistema.cadastrarInteresse(sessaoBill, "Campina Grande", "", "", "", "");
+		
+		sistema.cadastrarCarona(sessaoMark, "Campina Grande", "João Pessoa", "17/06/2012", "15:00", "3");
+		
+		assertEquals(3, caroneiro.getListaDeMensagens().size());
+		
+		sistema.cadastrarInteresse(sessaoBill, "", "", "", "15:00", "");
+		
+		sistema.cadastrarCarona(sessaoMark, "Campina Grande", "João Pessoa", "19/06/2012", "15:00", "3");
+		
+		assertEquals(6, caroneiro.getListaDeMensagens().size());
+		
+		sistema.cadastrarInteresse(sessaoBill, "", "", "", "16:00", ""); // fora do horario
+		
+		sistema.cadastrarCarona(sessaoMark, "Campina Grande", "João Pessoa", "20/06/2012", "15:00", "3");
+
+		assertEquals(9, caroneiro.getListaDeMensagens().size());
+	
+	}
+	
 	
 
 }

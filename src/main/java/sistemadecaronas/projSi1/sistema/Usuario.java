@@ -180,6 +180,10 @@ public class Usuario {
 	public void removeCaronaQueParticipa(Carona carona){
 		listaDeCaronasQueParticipa.remove(carona);
 	}
+	
+	public void removeCarona(Carona carona){
+		listaDeCaronasDoUsuario.remove(carona);
+	}
 	public void addMensagem(String mensagem) {
 		listaDeMensagens.add(mensagem);
 		
