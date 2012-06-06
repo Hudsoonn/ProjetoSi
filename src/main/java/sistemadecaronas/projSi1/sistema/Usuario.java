@@ -16,7 +16,7 @@ public class Usuario {
 	private String id = null;
 	private List<Carona> listaDeCaronasQueParticipa = null;
 	private List<Carona> listaDeCaronasDoUsuario = null;
-	private List<String> listaDeMensagens;
+	private List<Mensagem> listaDeMensagens;
 	private int presencaEmCaronas;
 	private int faltasEmCaronas;
 	private int caronasNaoFuncionaram;
@@ -33,7 +33,7 @@ public class Usuario {
 		this.email = email;
 		listaDeCaronasQueParticipa = new ArrayList<Carona>();
 		listaDeCaronasDoUsuario = new ArrayList<Carona>();
-		listaDeMensagens = new ArrayList<String>();
+		listaDeMensagens = new ArrayList<Mensagem>();
 		
 		
 		this.historicoCaronas = new ArrayList<Carona>();
@@ -46,7 +46,7 @@ public class Usuario {
 
 	}
 	
-	public String getMensagens()
+/*	public String getMensagens()
 	{
 		String saida = "";
 		for(String s : listaDeMensagens)
@@ -54,9 +54,9 @@ public class Usuario {
 			saida = saida + "\n" + s;
 		}
 		return saida;
-	}
+	}*/
 
-	public List<String> getListaDeMensagens() {
+	public List<Mensagem> getListaDeMensagens() {
 		return listaDeMensagens;
 	}
 
@@ -184,9 +184,13 @@ public class Usuario {
 	public void removeCarona(Carona carona){
 		listaDeCaronasDoUsuario.remove(carona);
 	}
-	public void addMensagem(String mensagem) {
+	public void addMensagem(Mensagem mensagem) {
 		listaDeMensagens.add(mensagem);
 		
+	}
+	
+	public void removeMensagem(Mensagem mensagem){
+		listaDeMensagens.remove(mensagem);
 	}
 
 	

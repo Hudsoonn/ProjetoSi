@@ -20,7 +20,7 @@ public class SistemaDeCarona2 {
 	public List<Usuario> listaDeUsuarios = new ArrayList<Usuario>();
 	public List<Carona> listaDeCaronas = new ArrayList<Carona>();
 	public List<CaronaIntermunicipal> listaDeCaronasInterMunicipais = new ArrayList<CaronaIntermunicipal>();
-	public List<CaronaMunicipal> listaDeCaronasDentroDaCidade = new ArrayList<CaronaMunicipal>();
+	public List<CaronaMunicipal> listaDeCaronasMunicipais = new ArrayList<CaronaMunicipal>();
 	public List<Sessao> listaDeSessoesAbertas = new ArrayList<Sessao>();
 	public List<Interesse> listaDeInteresses = new ArrayList<Interesse>();
 	//private boolean desistirSolicitacao;
@@ -431,7 +431,7 @@ public class SistemaDeCarona2 {
 				data, hora, vagasInt);
 		novaCarona.setDonoDaCarona(buscaUsuario(sessao.getLogin()));
 		listaDeCaronas.add(novaCarona);//
-		listaDeCaronasDentroDaCidade.add((CaronaMunicipal) novaCarona);
+		listaDeCaronasMunicipais.add((CaronaMunicipal) novaCarona);
 
 		/*String login = sessao.getLogin();
 		String idCarona = novaCarona.getIdDaCarona();
@@ -462,8 +462,13 @@ public class SistemaDeCarona2 {
 		for(Interesse interesse : listaDeInteresses)
 		{
 			if(caronaEhDeInteresse(carona, interesse))
-			{
-				enviaMensagem(idDaSessao, buscarSessaoId(interesse.getIdSessao()).getLogin(), data, hora);
+			{   
+				String loginDonoCarona = buscarSessaoId(idDaSessao).getLogin();
+				String loginCaroneiro = buscarSessaoId(interesse.getIdSessao()).getLogin();
+				Conteudo conteudo =  new ConteudoTexto(String.format(mensagensDoSistema.MENSAGEM_INTERESSE.getMensagem(),data,hora,buscaUsuario(loginDonoCarona).getEmail()));
+				Mensagem mensagem = new Mensagem(loginDonoCarona, loginCaroneiro, conteudo);
+				
+				enviaMensagem(mensagem);
 			}
 		}
 		
@@ -502,11 +507,12 @@ public class SistemaDeCarona2 {
 			return saida;
 	}
 	
-	public enum mensagens{
+	
+	public enum mensagensDoSistema{
 		MENSAGEM_INTERESSE("Carona cadastrada no dia %s, Às %s de acordo com os seus interesses registrados. Entrar em contato com %s");
 		
 		String mensagem;
-	    mensagens(String mensagem){
+	    mensagensDoSistema(String mensagem){
 		 this.mensagem = mensagem;
 		}
 		
@@ -524,15 +530,19 @@ public class SistemaDeCarona2 {
     * @param hora
     * @throws Exception
     */
-	private void enviaMensagem(String idSessao, String loginDestino, String data, String hora) throws Exception {
+	public void enviaMensagem(Mensagem mensagem) throws Exception {
 		//expect "[Carona cadastrada no dia 23/06/2012, Ã s 16:00 de acordo com os seus interesses registrados. Entrar em contato com jucaPeroba@gmail.com]" verificarMensagensPerfil idSessao=${sessaoZezito}
-		Sessao sessao = buscarSessaoId(idSessao);
+		/*Sessao sessao = buscarSessaoId(idSessao);
 		Usuario usuario = buscaUsuario(sessao.getLogin());
 		String mensagem = "Carona cadastrada no dia " + data + ", Às " + hora + " de acordo com os seus interesses registrados." +
-							" Entrar em contato com " + usuario.getEmail();
+							" Entrar em contato com " + usuario.getEmail();*/
 		
-		Usuario destinatario = buscaUsuario(loginDestino);
+		Usuario destinatario = buscaUsuario(mensagem.getDestinatario());
 		destinatario.addMensagem(mensagem);
+	}
+	
+	public void deletarMensagem(Usuario usuario, Mensagem mensagem){
+		usuario.removeMensagem(mensagem);
 	}
 	
 	public boolean caronaEhDeInteresse(Carona carona,Interesse interesse) throws Exception{		
@@ -561,13 +571,13 @@ public class SistemaDeCarona2 {
 		
 	}
 	
-	public String verificarMensagensPerfil(String idSessao)
+	/*public String verificarMensagensPerfil(String idSessao)
 	{
 		Sessao sessao = buscarSessaoId(idSessao);
 		Usuario usuario = buscaUsuario(sessao.getLogin());
 		return usuario.getMensagens();
 	}
-	
+	*/
 
 	
 	
@@ -705,6 +715,16 @@ public class SistemaDeCarona2 {
 		
 		return localizarPorCidade(cidade, caronasEncontradas);
 		
+	}
+	
+	public void addCaronaNaListaDeCaronaEspecifica(){
+		for (Carona carona : listaDeCaronas) {
+			if (carona.tipoDeCarona().equals("Municipal")) {
+				listaDeCaronasMunicipais.add((CaronaMunicipal) carona);
+			}else{
+				listaDeCaronasInterMunicipais.add((CaronaIntermunicipal) carona);
+			}
+		}
 	}
 	/*
 	// fazer excecao cidade
@@ -1233,7 +1253,7 @@ public class SistemaDeCarona2 {
 		if (carona.getDonoDaCarona().getLogin().equals(usuario.getLogin())) { // se eh o dono da carona
 			
 			for (Usuario usuarioDaCarona : carona.getListaDeParticipantes()) {
-		        usuarioDaCarona.getListaDeCaronasQueParticipa().remove(carona);
+		        usuarioDaCarona.removeCaronaQueParticipa(carona);
 			}
 		}else{
 			throw new Exception("o Usuário não é o dono da carona");
@@ -1242,6 +1262,61 @@ public class SistemaDeCarona2 {
 		listaDeCaronas.remove(carona);
 	}
 	
+	/**
+	 * cancela o interesse de um usuario
+	 * @param idSessao
+	 * @param interesse
+	 * @throws Exception 
+	 */
+	public void cancelarInteresse(String idSessao, Interesse interesse) throws Exception{
+		
+		if (interesse.getIdSessao().equals(idSessao)) {
+			removeInteresse(interesse);
+		}else{
+			throw new Exception("você não é o dono do interesse");
+		}
+	}
+	/**
+	 * remove o interesse da lista
+	 * @param interesse
+	 */
+	private void removeInteresse(Interesse interesse) {
+		
+		for (Interesse interesseFor : listaDeInteresses) {
+			
+			if (interesseFor.getData().equals(interesse.getData()) && interesseFor.getOrigem().equals(interesse.getOrigem()) && interesseFor.getDestino().equals(interesse.getDestino()) && interesseFor.getHoraInicial().equals(interesse.getHoraInicial()) && interesseFor.getHoraFim().equals(interesse.getHoraFim())) {
+				listaDeInteresses.remove(interesseFor);
+				break;
+			}
+			
+		}
+		
+	}
+
+	/**
+	 * o dono da carona pode excluir um caroneiro
+	 * @param idSessao
+	 * @param idCarona
+	 * @param loginCaroneiro
+	 */
+	public void excluirCaroneiroDaCarona(String idSessao, String idCarona, String loginCaroneiro){
+		Sessao sessao = buscarSessaoId(idSessao);
+		Carona carona = buscaCaronaID(idCarona);
+		Usuario caroneiro = buscaUsuario(loginCaroneiro);
+		if (carona.getDonoDaCarona().getLogin().equals(sessao.getLogin())) { // se eh o dono da carona
+			if (participaDaCarona(loginCaroneiro, idCarona)) {
+				carona.removeParticipante(caroneiro);
+				caroneiro.removeCaronaQueParticipa(carona);
+				carona.setVagas(carona.getVagas()+1);
+			}
+		}
+	}
+	/**
+	 * 
+	 * @param login
+	 * @param idCarona
+	 * @return true se o usuario esta na carona procurada
+	 */
 	public boolean participaDaCarona(String login, String idCarona){
 		Carona carona = buscaCaronaID(idCarona);
 		boolean participa = false;
@@ -1254,6 +1329,14 @@ public class SistemaDeCarona2 {
 		return participa;
 	}
 	
+	/**
+	 * metodo para deletar um ponto de encontro da carona,
+	 * o dono deleta qualquer ponto e o participante o ponto que ele sugeriu
+	 * @param idSessao
+	 * @param idCarona
+	 * @param pontoDeEncontro
+	 * @throws Exception
+	 */
 	public void deletarPontoDeEncontro(String idSessao, String idCarona, PontoDeEncontro pontoDeEncontro) throws Exception{
 		
 		Sessao sessao = buscarSessaoId(idSessao);
@@ -1275,12 +1358,16 @@ public class SistemaDeCarona2 {
 		}else {
 			throw new Exception("Usuário não faz parte da carona");
 		}
-	
-	
-		
+			
 		
 	}
 	
+	/**
+	 * procura em uma carona um ponto de encontro sugerido por um usuario
+	 * @param login
+	 * @param idCarona
+	 * @return um objeto ponto de encontro
+	 */
 	public PontoDeEncontro buscaPontoPeloLogin(String login, String idCarona){
 		Carona carona = buscaCaronaID(idCarona);
 		PontoDeEncontro respPonto = null;
@@ -1294,14 +1381,6 @@ public class SistemaDeCarona2 {
 		return respPonto;
 	}
 
-/*	public void excecaoDesistirSolicitacao(boolean desistirSolicitacao)
-			throws Exception {
-
-		if (desistirSolicitacao == true) {
-			throw new Exception("Ponto Inválido");
-		}
-
-	}*/
 
 	public void excecaoResponderPontoDeEncontro(String pontos) throws Exception {
 		if (pontos.equals("") || pontos == null) {
@@ -1363,6 +1442,8 @@ public class SistemaDeCarona2 {
 	    this.listaDeCaronas = (List<Carona>) ser.recuperar("Caronas");
 	    this.listaDeUsuarios  = (List<Usuario>) ser.recuperar("Usuarios");
 	    this.listaDeInteresses  = (List<Interesse>) ser.recuperar("Interesses");
+	    
+	    addCaronaNaListaDeCaronaEspecifica();
 
      
 	}
@@ -1572,7 +1653,7 @@ public class SistemaDeCarona2 {
 		listaDeSessoesAbertas.clear();
 		listaDeUsuarios.clear();
 		listaDeCaronasInterMunicipais.clear();
-		listaDeCaronasDentroDaCidade.clear();
+		listaDeCaronasMunicipais.clear();
 		listaDeInteresses.clear();
 	 //   encerrarSistema();
 
@@ -1581,6 +1662,7 @@ public class SistemaDeCarona2 {
 	public static void main(String[] args) throws Exception {
 		
 		SistemaDeCarona2 s = getInstanceOf();
+		s.criarUsuario("Hudson", "123", "Hudson Daniel", "edesio silva", "hudson@gmail.com");
 		
 		/*s.criarUsuario("Hudson", "123", "Hudson Daniel", "edesio silva", "hudson@gmail.com");
 		s.criarUsuario("Hudson2", "123", "Hudson Daniel", "edesio silva", "hudson@gmaill.com");

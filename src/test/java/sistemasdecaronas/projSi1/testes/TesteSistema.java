@@ -13,6 +13,9 @@ import java.util.List;
 import org.junit.*;
 
 import sistemadecaronas.projSi1.sistema.Carona;
+import sistemadecaronas.projSi1.sistema.ConteudoTexto;
+import sistemadecaronas.projSi1.sistema.Interesse;
+import sistemadecaronas.projSi1.sistema.Mensagem;
 import sistemadecaronas.projSi1.sistema.PontoDeEncontro;
 import sistemadecaronas.projSi1.sistema.SistemaDeCarona;
 import sistemadecaronas.projSi1.sistema.SistemaDeCarona2;
@@ -239,6 +242,13 @@ public class TesteSistema {
 	public void sugerirPontoEncontro() throws Exception {
 		Carona carona = sistema.buscaCaronaID(idCarona4);
 		assertEquals(0, carona.getSugestoes().size());
+		
+		try {
+			sistema.sugerirPontoEncontro(sessaoBill, idCarona4, "acude");
+		} catch (Exception e) {
+			assertEquals("Usuário não participa da carona", e.getMessage());
+		}
+		
 		String idSolitacao = sistema.solicitarVaga(sessaoBill, idCarona4);
 		sistema.aceitarSolicitacao(sessaoMark, idSolitacao);
 		sistema.sugerirPontoEncontro(sessaoBill, idCarona4, "acude");
@@ -265,12 +275,14 @@ public class TesteSistema {
 
 	@Test
 	public void testaSolicitarVagaPontoEncontro() throws Exception {
-	    /*
-		  e ele pode solicitar vaga em acude tranquilo que é um ponto sugerido
-		  nao é um ponto aceito.. nao entendi
-		 */
 		
 		Carona carona = sistema.buscaCaronaID(idCarona4);
+		
+		try {
+			sistema.solicitarVagaPontoEncontro(sessaoBill, idCarona4, "centro");
+		} catch (Exception e) {
+			assertEquals("Ponto Inválido", e.getMessage());
+		}
 		carona.addPontoDeEncontro(new PontoDeEncontro(sistema.buscaUsuario("mark"), "centro"));
 		
 		sistema.solicitarVagaPontoEncontro(sessaoBill, idCarona4, "centro");
@@ -283,7 +295,40 @@ public class TesteSistema {
 	public void testaSolicitarVaga() throws Exception {
 		sistema.solicitarVaga(sessaoBill, idCarona4);
 		Carona carona = sistema.buscaCaronaID(idCarona4);
+		int numeroDeVagas = carona.getVagas();
+	
 		assertEquals(1, carona.getListaDeSolicitacao().size());
+		assertEquals(carona.getVagas(), numeroDeVagas);
+		
+	}
+	
+	@Test
+	public void testaAceitarSolicitacao() throws Exception{
+		
+		Carona carona = sistema.buscaCaronaID(idCarona5);
+		int numeroDeVagas = carona.getVagas();
+		String idSolicitacao = sistema.solicitarVaga(sessaoBill, idCarona5);
+		
+		assertEquals(carona.getVagas(), numeroDeVagas);
+		
+		sistema.aceitarSolicitacao(sessaoMark, idSolicitacao);
+		
+		assertEquals(carona.getVagas(), numeroDeVagas-1);
+		
+		carona.setVagas(0);
+		
+		try {
+			sistema.solicitarVaga(sessaoBill, idCarona5);
+		} catch (Exception e) {
+			assertEquals("o usuário já esta na carona", e.getMessage());
+		}
+		
+		try {
+			sistema.solicitarVaga(sessaoSteve, idCarona5);
+		} catch (Exception e) {
+			assertEquals("não há mais vagas na carona", e.getMessage());
+		}
+		
 	}
 
 	@Test
@@ -299,9 +344,7 @@ public class TesteSistema {
 				sistema.getAtributoSolicitacao(idSolicitacao, "Dono da carona"));
 		assertEquals("William Henry Gates III", sistema.getAtributoSolicitacao(
 				idSolicitacao, "Dono da solicitacao"));
-		/*
-		 * [BUG] como eu seto o ponto de encontro?
-		 */
+
 		Solicitacao solicitacao = sistema.buscaSolicitacao(idSolicitacao);
 		
 		assertEquals(null, sistema.getAtributoSolicitacao(idSolicitacao,
@@ -484,6 +527,93 @@ public class TesteSistema {
 		assertEquals(9, caroneiro.getListaDeMensagens().size());
 	
 	}
+	
+	@Test
+	public void testaEnviaMensagem() throws Exception{
+		
+		Usuario usuario = sistema.buscaUsuario("bill");
+		
+		sistema.cadastrarInteresse(sessaoBill, "", "", "", "", "");
+		
+		assertEquals(0, usuario.getListaDeMensagens().size());
+		
+		sistema.cadastrarCarona(sessaoMark, "Campina", "Patos", "14/07/2012", "11:00", "3");
+
+		assertEquals(1, usuario.getListaDeMensagens().size());
+		
+		String mensagem = "Carona cadastrada no dia 14/07/2012, Às 11:00 de acordo com os seus interesses registrados. Entrar em contato com mark@facebook.com";
+	
+		assertEquals(mensagem, usuario.getListaDeMensagens().get(0).getConteudo().getConteudo());
+		
+		Mensagem mensagem2 = new Mensagem("mark", "bill", new ConteudoTexto("mensagem de teste"));
+		sistema.enviaMensagem(mensagem2);
+		
+		assertEquals(2, usuario.getListaDeMensagens().size());
+		
+		assertEquals("mensagem de teste", usuario.getListaDeMensagens().get(1).getConteudo().getConteudo());
+		
+		sistema.deletarMensagem(usuario, mensagem2);
+		
+		assertEquals(1,usuario.getListaDeMensagens().size());
+		
+	}
+	
+	@Test
+	public void testaExcluiCaroneiroDaCarona() throws Exception{
+		
+	    Carona carona = sistema.buscaCaronaID(idCarona4);
+		int numeroDeVagas = carona.getVagas();
+		Usuario caroneiro = sistema.buscaUsuario("bill");
+		
+		int caronasQueParticipa = caroneiro.getListaDeCaronasQueParticipa().size();
+		
+		assertEquals(0, caronasQueParticipa);
+		
+		String idSolicitacao = sistema.solicitarVaga(sessaoBill, idCarona4);
+		sistema.aceitarSolicitacao(sessaoMark, idSolicitacao);
+		
+		assertEquals(1, carona.getListaDeParticipantes().size());
+		assertEquals(carona.getVagas(), numeroDeVagas-1);
+		assertEquals(1, caronasQueParticipa+1);
+		
+		sistema.excluirCaroneiroDaCarona(sessaoMark, idCarona4, "bill");
+		
+		assertEquals(0, carona.getListaDeParticipantes().size());
+		assertEquals(carona.getVagas(), numeroDeVagas);
+		assertEquals(0, caronasQueParticipa);
+		
+	}
+	
+	@Test
+	public void testaCancelarInteresse() throws Exception{
+		
+		sistema.cadastrarInteresse(sessaoBill, "", "", "", "", "");
+		
+		assertEquals(1, sistema.listaDeInteresses.size());
+		
+        sistema.cadastrarCarona(sessaoSteve, "campina","joão pessoa", "15/12/2012", "14:00", "1");
+        
+        assertEquals(1, sistema.buscaUsuario("bill").getListaDeMensagens().size());
+        
+        try {
+        	sistema.cancelarInteresse(sessaoMark, new Interesse(sessaoBill, "", "", "", "", ""));
+		} catch (Exception e) {
+			assertEquals("você não é o dono do interesse", e.getMessage());
+		}
+        
+        sistema.cancelarInteresse(sessaoBill, new Interesse(sessaoBill, "", "", "", "", ""));
+        
+        sistema.cadastrarCarona(sessaoSteve, "campina","joão pessoa", "15/12/2012", "16:00", "1");
+         
+        assertEquals(1, sistema.buscaUsuario("bill").getListaDeMensagens().size());
+        assertEquals(0, sistema.listaDeInteresses.size());
+        
+        
+        
+		
+	}
+	
+	
 	
 	
 
