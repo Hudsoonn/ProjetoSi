@@ -13,6 +13,7 @@ import java.util.List;
 import sistemadecaronas.projSi1.auxiliar.TrataDatas;
 import sistemadecaronas.projSi1.persistencia.CriarXML;
 import sistemadecaronas.projSi1.persistencia.InterfaceXML;
+import sistemadecaronas.projSi1.sistema.SistemaDeCarona2.mensagensDoSistema;
 
 public class SistemaDeCaronaEasy {
 
@@ -375,27 +376,48 @@ public class SistemaDeCaronaEasy {
 
 	}
 
-
 	private void verificaInteresse(String idDaSessao, String origem,
 			String destino, String data, String hora) throws Exception {
 		//Sessao sessao = buscarSessaoId(idDaSessao);
-		
+		Carona carona = new CaronaIntermunicipal(origem, destino, data, hora, 0);
 		for(Interesse interesse : listaDeInteresses)
 		{
-			System.out.println(interesse.getOrigem()+" "+interesse.getDestino()+" "+interesse.getData()+" "+interesse.getHoraInicial()+" "+interesse.getHoraFim());
-			System.out.println(origem+" "+destino+" "+data+" "+hora);
-			System.out.println(origem.equals(interesse.getOrigem()));
-			System.out.println(destino.equals(interesse.getDestino()));
-			System.out.println(data.equals(interesse.getData()));
-			System.out.println("antes do comparaHoras");
-			System.out.println(comparaHoras(hora, interesse.getHoraInicial(), interesse.getHoraFim()));
-            System.out.println("_____________");
-			if(origem.equals(interesse.getOrigem()) && destino.equals(interesse.getDestino()) && data.equals(interesse.getData()) && comparaHoras(hora, interesse.getHoraInicial(), interesse.getHoraFim()))
-			{
-				enviaMensagem(idDaSessao,buscarSessaoId(interesse.getIdSessao()).getLogin(), data, hora);
-				break;//só envia uma mensagem
+			if(caronaEhDeInteresse(carona, interesse))
+			{   
+				String loginDonoCarona = buscarSessaoId(idDaSessao).getLogin();
+				String loginCaroneiro = buscarSessaoId(interesse.getIdSessao()).getLogin();
+				Conteudo conteudo =  new ConteudoTexto(String.format(mensagensDoSistema.MENSAGEM_INTERESSE.getMensagem(),data,hora,buscaUsuario(loginDonoCarona).getEmail()));
+				Mensagem mensagem = new Mensagem(loginDonoCarona, loginCaroneiro, conteudo);
+				
+				enviaMensagem(mensagem);
 			}
 		}
+		
+	}
+	
+	public boolean caronaEhDeInteresse(Carona carona,Interesse interesse) throws Exception{		
+		boolean ehDeInteresse = false;
+		
+		if (interesse.getOrigem().equals("") || interesse.getOrigem().equals(carona.getOrigem())) {
+			ehDeInteresse = true;
+		}else if (!interesse.getOrigem().equals(carona.getOrigem())) {
+			ehDeInteresse = false;
+			
+		}
+		if (!interesse.getDestino().equals(carona.getDestino()) && !interesse.getDestino().equals("")) {
+			ehDeInteresse = false;
+		}
+		
+		if (!comparaHoras(carona.getHora(), interesse.getHoraInicial(), interesse.getHoraFim())) {
+			ehDeInteresse = false;
+		}
+		
+		if (!interesse.getData().equals(carona.getData()) && !interesse.getData().equals("")) {
+			ehDeInteresse = false;
+		}
+			
+		
+		return ehDeInteresse;
 		
 	}
 
@@ -420,16 +442,30 @@ public class SistemaDeCaronaEasy {
 				   
 			return saida;
 	}
+	
+	public enum mensagensDoSistema{
+		MENSAGEM_INTERESSE("Carona cadastrada no dia %s, Às %s de acordo com os seus interesses registrados. Entrar em contato com %s");
+		
+		String mensagem;
+	    mensagensDoSistema(String mensagem){
+		 this.mensagem = mensagem;
+		}
+		
+		public String getMensagem(){
+			
+   		   return mensagem;
+		}
+	}
 
-	private void enviaMensagem(String idSessao, String loginDestino, String data, String hora) throws Exception {
+
+	public void enviaMensagem(Mensagem mensagem) throws Exception {
 		//expect "[Carona cadastrada no dia 23/06/2012, Ã s 16:00 de acordo com os seus interesses registrados. Entrar em contato com jucaPeroba@gmail.com]" verificarMensagensPerfil idSessao=${sessaoZezito}
-		Sessao sessao = buscarSessaoId(idSessao);
+		/*Sessao sessao = buscarSessaoId(idSessao);
 		Usuario usuario = buscaUsuario(sessao.getLogin());
-		
 		String mensagem = "Carona cadastrada no dia " + data + ", Às " + hora + " de acordo com os seus interesses registrados." +
-							" Entrar em contato com " + usuario.getEmail();
+							" Entrar em contato com " + usuario.getEmail();*/
 		
-		Usuario destinatario = buscaUsuario(loginDestino);
+		Usuario destinatario = buscaUsuario(mensagem.getDestinatario());
 		destinatario.addMensagem(mensagem);
 	}
 	
@@ -437,7 +473,11 @@ public class SistemaDeCaronaEasy {
 	{
 		Sessao sessao = buscarSessaoId(idSessao);
 		Usuario usuario = buscaUsuario(sessao.getLogin());
-		return usuario.getMensagens();
+		List<String> mensagens = new LinkedList<String>();
+		for (Mensagem mensagem : usuario.getListaDeMensagens()) {
+			mensagens.add((String) mensagem.getConteudo().getConteudo());
+		}
+		return mensagens.toString();
 	}
 	
 
@@ -938,7 +978,9 @@ public class SistemaDeCaronaEasy {
 		Solicitacao solicitacao = buscaSolicitacao(idSolicitacao);
 		Sessao sessao = buscarSessaoId(idSessao);
 		Carona carona = buscaCaronaID(solicitacao.getIdCarona());
-
+        
+		Sessao sessaoDeQuemSolicitou = buscarSessaoId(solicitacao.getIdSessao());
+	    Usuario usuarioQueSolicitou = buscaUsuario(sessaoDeQuemSolicitou.getLogin());
 		if (sessao.getLogin().equals(carona.getDonoDaCarona().getLogin())) { // se
 																				// o
 																				// dono
@@ -955,7 +997,7 @@ public class SistemaDeCaronaEasy {
 
 			carona.removeSolicitacao(solicitacao); // remove a solicitacao
 													// porque ja foi aceita
-			carona.addPontoDeEncontro(solicitacao.getPonto()); // adiciona o
+			carona.addPontoDeEncontro(new PontoDeEncontro(usuarioQueSolicitou, solicitacao.getPonto())); // adiciona o
 																// ponto de
 																// encontro da
 																// solicitacao
@@ -988,8 +1030,12 @@ public class SistemaDeCaronaEasy {
 
 	public void aceitarSolicitacao(String idSessao, String idSolicitacao)
 			throws Exception {
-		// Quem aceita nao era para ser o Dono da carona?!?!?!?!?!?!?!?
+		
 		Solicitacao solicitacao = buscaSolicitacao(idSolicitacao);
+		Sessao sessaoDeQuemSolicitou = buscarSessaoId(solicitacao.getIdSessao());
+	    Usuario usuarioQueSolicitou = buscaUsuario(sessaoDeQuemSolicitou.getLogin());
+		// Quem aceita nao era para ser o Dono da carona?!?!?!?!?!?!?!?
+
 		
 		// Sessao sessao = buscarSessaoId(idSessao);
 		Carona carona = buscaCaronaID(solicitacao.getIdCarona());
@@ -999,14 +1045,15 @@ public class SistemaDeCaronaEasy {
 		addhistoricoVagasEmCaronas(buscarSessaoId(solicitacao.getIdSessao())
 				.getLogin(), carona.getIdDaCarona());
 
-		List<String> pontoDeEncontro = new ArrayList<String>();
+		List<PontoDeEncontro> pontoDeEncontro = new ArrayList<PontoDeEncontro>();
 		if (solicitacao.getPonto() == null
 				&& carona.getPontoDeEncontro().isEmpty()) {
 			for (Sugestao sugestao : carona.getSugestoes()) {
-				pontoDeEncontro.add(sugestao.getPontos());
+				pontoDeEncontro.add(new PontoDeEncontro(buscaUsuario(buscarSessaoId(sugestao.getIdSessao()).getLogin()), sugestao.getPontos()));
 
 			}
 		}
+		
 		carona.setPontoDeEncontro(pontoDeEncontro);
 
 	}
@@ -1024,13 +1071,14 @@ public class SistemaDeCaronaEasy {
 		Sessao sessao = buscarSessaoId(idSessao);
 		Carona carona = buscaCaronaID(idCarona);
 		Sugestao sugestao = buscaSugestao(idSugestao, idCarona);
+        
 		if (sessao.getLogin().equals(carona.getDonoDaCarona().getLogin())) {
 			desistirSolicitacao = true;
 			if (sugestao != null) {
 				carona.removeSugestao(sugestao);
 			}
 			// remover as coisas
-			carona.removePontoDeEncontro(sugestao.getPontos());
+			carona.removePontoDeEncontro(new PontoDeEncontro(buscaUsuario(sessao.getLogin()), sugestao.getPontos()));
 			// sugestao.mapaDeResposta.remove(sugestao);
 			carona.removeSugestao(sugestao);
 			// carona.listaDeSolicitacao.remove(o);
@@ -1261,8 +1309,12 @@ public class SistemaDeCaronaEasy {
 		Carona carona = buscaCaronaID(idCarona);
 		List<String> pontosEncontro = new ArrayList<String>();
 		if (sessao.getLogin().equals(carona.getDonoDaCarona().getLogin())) {
-
-			pontosEncontro = carona.getPontoDeEncontro();
+            
+			for (PontoDeEncontro pontosDeEncontro : carona.getPontoDeEncontro()) {
+				 pontosEncontro.add(pontosDeEncontro.getPonto());
+				 
+			}
+			
 
 		}
 		return pontosEncontro;

@@ -1,13 +1,18 @@
 package sistemadecaronas.projSi1.sistema;
 
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import javax.mail.MessagingException;
 
 import sistemadecaronas.projSi1.auxiliar.TrataDatas;
 import sistemadecaronas.projSi1.persistencia.Serializador;
@@ -539,6 +544,52 @@ public class SistemaDeCarona2 {
 		
 		Usuario destinatario = buscaUsuario(mensagem.getDestinatario());
 		destinatario.addMensagem(mensagem);
+	}
+	
+	public void enviaEmail(String idSessao, String emailDestinatario, String mensagem) {		
+	  	EmailPropriedades eP = new EmailPropriedades();
+        //configuracoes de envio
+        eP.setSmtpHostMail("smtp.gmail.com");
+        eP.setSmtpPortMail("587");
+        eP.setSmtpAuth("true");
+        eP.setSmtpStarttls("true");
+        eP.setUserMail("email");
+        eP.setFromNameMail("Sistema de carona");
+        eP.setPassMail("senha");
+        eP.setCharsetMail("ISO-8859-1");
+        eP.setSubjectMail("JavaMail");
+        eP.setBodyMail(mensagem);
+        eP.setTypeTextMail(EmailPropriedades.TYPE_TEXT_HTML);
+        
+   	 String[] Arrayservidor = emailDestinatario.split("@");
+     String servidorAux = Arrayservidor[1];
+     servidorAux = servidorAux.replace(".", " ");
+     String[] Arrayservidor2 = servidorAux.split(" ");
+     String servidor = Arrayservidor2[0];
+
+        
+        //sete quantos destinatarios desejar
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(emailDestinatario, "email hotmail");
+
+        eP.setToMailsUsers(map);
+        
+        List<String> files = new ArrayList<String>();
+        
+        eP.setFileMails(files);
+        
+        EnviaEmail m = new EnviaEmail();
+
+			try {
+				m.enviarEmail(eP);
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (MessagingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	
 	}
 	
 	public void deletarMensagem(Usuario usuario, Mensagem mensagem){
