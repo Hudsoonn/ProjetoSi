@@ -13,17 +13,16 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.UnsupportedEncodingException;
-import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-public class EnviaEmail {
+public class MailJavaSender {
 
     //cria as propriedades necessárias para o envio de email
-    public void enviarEmail(final EmailPropriedades mail) throws 
+    public void senderMail(final MailJava mail) throws 
          UnsupportedEncodingException, MessagingException {
 
         Properties props = new Properties();
@@ -105,5 +104,8 @@ public class EnviaEmail {
         Transport.send(msg);
     }
     
-   
+  
+        
+  
+    
 }

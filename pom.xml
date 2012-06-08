@@ -51,6 +51,7 @@
 	<artifactId>geronimo-javamail_1.4_spec</artifactId>
 	<version>1.4</version>
 </dependency>
-
+  
+            
   </dependencies>
 </project>

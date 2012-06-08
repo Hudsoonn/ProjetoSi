@@ -603,7 +603,7 @@ public class TesteSistema {
         
         sistema.cancelarInteresse(sessaoBill, new Interesse(sessaoBill, "", "", "", "", ""));
         
-        sistema.cadastrarCarona(sessaoSteve, "campina","joão pessoa", "15/12/2012", "16:00", "1");
+        sistema.cadastrarCarona(sessaoSteve, "campina","joão pessoa", "15/12/2012", "20:00", "1");
          
         assertEquals(1, sistema.buscaUsuario("bill").getListaDeMensagens().size());
         assertEquals(0, sistema.listaDeInteresses.size());
@@ -611,6 +611,81 @@ public class TesteSistema {
         
         
 		
+	}
+	
+	@Test
+	public void testaParticipaDeCaronaNoHorario() throws Exception{
+	  String idSolicitacao = sistema.solicitarVaga(sessaoBill, idCarona4);
+	  sistema.aceitarSolicitacao(sessaoMark, idSolicitacao);
+	  
+	  Usuario usuario = sistema.buscaUsuario("bill");
+	  assertEquals(false,sistema.participaDeCaronaNoHorario(sessaoBill, "12/06/2012", "11:59",usuario.getListaDeCaronasQueParticipa()));
+	  
+	  assertEquals(true,sistema.participaDeCaronaNoHorario(sessaoBill, "12/06/2012", "12:00",usuario.getListaDeCaronasQueParticipa()));
+	  assertEquals(true,sistema.participaDeCaronaNoHorario(sessaoBill, "12/06/2012", "13:00",usuario.getListaDeCaronasQueParticipa()));
+	  
+	  assertEquals(true,sistema.participaDeCaronaNoHorario(sessaoBill, "12/06/2012", "14:00",usuario.getListaDeCaronasQueParticipa()));
+	  assertEquals(true,sistema.participaDeCaronaNoHorario(sessaoBill, "12/06/2012", "15:00",usuario.getListaDeCaronasQueParticipa()));
+	  assertEquals(true,sistema.participaDeCaronaNoHorario(sessaoBill, "12/06/2012", "16:00",usuario.getListaDeCaronasQueParticipa()));
+	  
+	  assertEquals(false,sistema.participaDeCaronaNoHorario(sessaoBill, "12/06/2012", "16:01",usuario.getListaDeCaronasQueParticipa()));
+		
+	}
+	
+	@Test
+	public void testaTemCaronaNoHorario() throws Exception{
+		
+	  Usuario usuario = sistema.buscaUsuario("mark");
+	  
+      assertEquals(false,sistema.temCaronaNoHorario(sessaoMark, "12/06/2012", "11:59",usuario.getListaDeCaronasDoUsuario()));
+	  
+	  assertEquals(true,sistema.temCaronaNoHorario(sessaoMark, "12/06/2012", "12:00",usuario.getListaDeCaronasDoUsuario()));
+	  assertEquals(true,sistema.temCaronaNoHorario(sessaoMark, "12/06/2012", "13:00",usuario.getListaDeCaronasDoUsuario()));
+	  
+	  assertEquals(true,sistema.temCaronaNoHorario(sessaoMark, "12/06/2012", "14:00",usuario.getListaDeCaronasDoUsuario()));
+	  assertEquals(true,sistema.temCaronaNoHorario(sessaoMark, "12/06/2012", "15:00",usuario.getListaDeCaronasDoUsuario()));
+	  assertEquals(true,sistema.temCaronaNoHorario(sessaoMark, "12/06/2012", "16:00",usuario.getListaDeCaronasDoUsuario()));
+	  
+	  assertEquals(false,sistema.temCaronaNoHorario(sessaoMark, "12/06/2012", "16:01",usuario.getListaDeCaronasDoUsuario()));
+	  
+	  
+	}
+	
+	@Test
+	
+	public void testaCadastrarCaronaHorarioExistente() throws Exception{
+		
+		try {
+			sistema.cadastrarCarona(sessaoMark, "campina", "joão pessoa","12/06/2012", "14:00", "3");
+		} catch (Exception e) {
+			 assertEquals("você já tem uma carona em um horario proximo", e.getMessage());
+		}
+		
+		try {
+			sistema.cadastrarCarona(sessaoMark, "campina", "joão pessoa","12/06/2012", "12:00", "3");
+		} catch (Exception e) {
+			 assertEquals("você já tem uma carona em um horario proximo", e.getMessage());
+		}
+		
+		try {
+			sistema.cadastrarCarona(sessaoMark, "campina", "joão pessoa","12/06/2012", "15:00", "3");
+		} catch (Exception e) {
+			 assertEquals("você já tem uma carona em um horario proximo", e.getMessage());
+		}
+		
+		try {
+			sistema.cadastrarCarona(sessaoMark, "campina", "joão pessoa","12/06/2012", "16:00", "3");
+		} catch (Exception e) {
+			 assertEquals("você já tem uma carona em um horario proximo", e.getMessage());
+		}
+		
+       assertEquals(2, sistema.buscaUsuario("mark").getListaDeCaronasDoUsuario().size());
+	   sistema.cadastrarCarona(sessaoMark, "campina", "joão pessoa","12/06/2012", "16:01", "3");
+	   assertEquals(3, sistema.buscaUsuario("mark").getListaDeCaronasDoUsuario().size());
+
+
+
+
 	}
 	
 	

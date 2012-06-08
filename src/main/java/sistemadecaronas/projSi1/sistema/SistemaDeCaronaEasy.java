@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.Iterator;
@@ -11,8 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import sistemadecaronas.projSi1.auxiliar.TrataDatas;
-import sistemadecaronas.projSi1.persistencia.CriarXML;
-import sistemadecaronas.projSi1.persistencia.InterfaceXML;
+import sistemadecaronas.projSi1.persistencia.Serializador;
 import sistemadecaronas.projSi1.sistema.SistemaDeCarona2.mensagensDoSistema;
 
 public class SistemaDeCaronaEasy {
@@ -24,7 +24,7 @@ public class SistemaDeCaronaEasy {
 //	public List<Perfil> listaDePerfis = new ArrayList<Perfil>();
 	public List<Carona> listaDeCaronas = new ArrayList<Carona>();
 	public List<CaronaIntermunicipal> listaDeCaronasInterMunicipais = new ArrayList<CaronaIntermunicipal>();
-	public List<CaronaMunicipal> listaDeCaronasDentroDaCidade = new ArrayList<CaronaMunicipal>();
+	public List<CaronaMunicipal> listaDeCaronasMunicipais = new ArrayList<CaronaMunicipal>();
 	public List<Sessao> listaDeSessoesAbertas = new ArrayList<Sessao>();
 	public List<Interesse> listaDeInteresses = new ArrayList<Interesse>();
 	private boolean desistirSolicitacao;
@@ -51,15 +51,12 @@ public class SistemaDeCaronaEasy {
 
 	public void encerrarSistema() {
 
-		/*CriarXML cXML = new CriarXML();
-		cXML.criaXMLUsuarios(listaDeUsuarios);*/
+		Serializador<Collection> ser = new Serializador<Collection>();
 		
-		InterfaceXML interXML;
-		interXML = new InterfaceXML("Usuarios", listaDeUsuarios);
-		interXML.saveData();
-		interXML = new InterfaceXML("Caronas", listaDeCaronas);
-		interXML.saveData();
-
+		ser.salvar("Usuarios", this.listaDeUsuarios);
+		ser.salvar("Caronas", this.listaDeCaronas);
+		ser.salvar("Interesses", this.listaDeInteresses);
+        
 		System.out.println("Sistema Encerrado");
 	}
 
@@ -360,7 +357,7 @@ public class SistemaDeCaronaEasy {
 		novaCarona.setDonoDaCarona(buscaUsuario(sessao.getLogin()));
 
 		listaDeCaronas.add(novaCarona);//
-		listaDeCaronasDentroDaCidade.add((CaronaMunicipal) novaCarona);
+		listaDeCaronasMunicipais.add((CaronaMunicipal) novaCarona);
 
 		String login = sessao.getLogin();
 		String idCarona = novaCarona.getIdDaCarona();
@@ -619,7 +616,7 @@ public class SistemaDeCaronaEasy {
 
 		if (isSessaoAberta(idSessao)) {
 
-			for (CaronaMunicipal carona : listaDeCaronasDentroDaCidade) {
+			for (CaronaMunicipal carona : listaDeCaronasMunicipais) {
 
 				if (!origem.equals("") && !destino.equals("")
 						&& !cidade.equals("")) { // lista todas
@@ -694,7 +691,7 @@ public class SistemaDeCaronaEasy {
 
 		if (isSessaoAberta(idSessao)) {
 
-			for (CaronaMunicipal carona : listaDeCaronasDentroDaCidade) {
+			for (CaronaMunicipal carona : listaDeCaronasMunicipais) {
 
 				if (carona.getCidade().equals(cidade)) { 
 
@@ -1167,15 +1164,26 @@ public class SistemaDeCaronaEasy {
 	}*/
 
 	public void reiniciarSistema() throws Exception {
-		// CriarXML cXml = new CriarXML();
-		// cXml.lerXMLUsuarios(listaDeUsuarios, listaDeCaronas);
 
-		InterfaceXML interXML;
-		interXML = new InterfaceXML("Usuarios", listaDeUsuarios);
-		interXML.loadData();
-		interXML = new InterfaceXML("Caronas", listaDeCaronas);
-		interXML.loadData();
+	    Serializador<Collection> ser = new Serializador<Collection>();
+	    
+	    this.listaDeCaronas = (List<Carona>) ser.recuperar("Caronas");
+	    this.listaDeUsuarios  = (List<Usuario>) ser.recuperar("Usuarios");
+	    this.listaDeInteresses  = (List<Interesse>) ser.recuperar("Interesses");
+	    
+	    addCaronaNaListaDeCaronaEspecifica();
 
+     
+	}
+	
+	public void addCaronaNaListaDeCaronaEspecifica(){
+		for (Carona carona : listaDeCaronas) {
+			if (carona.tipoDeCarona().equals("Municipal")) {
+				listaDeCaronasMunicipais.add((CaronaMunicipal) carona);
+			}else{
+				listaDeCaronasInterMunicipais.add((CaronaIntermunicipal) carona);
+			}
+		}
 	}
 
 	public String getCaronaUsuario(String idSessao, int indexCarona) {
@@ -1428,7 +1436,7 @@ public class SistemaDeCaronaEasy {
 		listaDeSessoesAbertas.clear();
 		listaDeUsuarios.clear();
 		listaDeCaronasInterMunicipais.clear();
-		listaDeCaronasDentroDaCidade.clear();
+		listaDeCaronasMunicipais.clear();
 		listaDeInteresses.clear();
 		//encerrarSistema();
 

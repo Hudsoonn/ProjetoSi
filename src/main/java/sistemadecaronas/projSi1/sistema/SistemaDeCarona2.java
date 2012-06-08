@@ -1,18 +1,22 @@
 package sistemadecaronas.projSi1.sistema;
 
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.mail.MessagingException;
+
+import com.thoughtworks.xstream.io.json.JsonWriter.Format;
 
 import sistemadecaronas.projSi1.auxiliar.TrataDatas;
 import sistemadecaronas.projSi1.persistencia.Serializador;
@@ -237,7 +241,7 @@ public class SistemaDeCarona2 {
 	public void excecaoDeCriacaoDeCarona(String idDaSessao, String origem,
 			String destino, String data, String hora, String vagas)
 			throws Exception {
-
+        
 		if (idDaSessao == null || idDaSessao.equals("")) {
 			throw new Exception("Sessão inválida");
 		}
@@ -274,6 +278,12 @@ public class SistemaDeCarona2 {
 				throw new Exception("número de vagas inválido");
 			}
 		}
+	Sessao sessao = buscarSessaoId(idDaSessao);
+    Usuario usuario = buscaUsuario(sessao.getLogin());
+	 if (temCaronaNoHorario(idDaSessao, data, hora, usuario.getListaDeCaronasDoUsuario())) {
+		throw new Exception("você já tem uma carona em um horario proximo");
+	  }
+
 
 	}
     
@@ -400,10 +410,6 @@ public class SistemaDeCarona2 {
 		listaDeCaronas.add(novaCarona);//
 		listaDeCaronasInterMunicipais.add((CaronaIntermunicipal) novaCarona);
 
-		/*String login = sessao.getLogin();
-		String idCarona = novaCarona.getIdDaCarona();
-		addCaronaNoHistorico(login, idCarona);*/
-
 		Usuario usuario = buscaUsuario(sessao.getLogin());
 		usuario.addCarona(novaCarona);
 		
@@ -412,6 +418,101 @@ public class SistemaDeCarona2 {
 		
 		return novaCarona.getIdDaCarona();
 
+	}
+	public boolean temCaronaNoHorario(String idSessao, String data, String hora, List<Carona> listaDeCaronas) throws Exception{
+        
+		Sessao sessao = buscarSessaoId(idSessao);
+		Usuario usuario = buscaUsuario(sessao.getLogin());
+		
+		
+		return comparaCalendar(idSessao, data, hora, usuario.getListaDeCaronasDoUsuario());
+	}
+	
+	
+	
+	public boolean participaDeCaronaNoHorario(String idSessao, String data, String hora, List<Carona> listaDeCaronas) throws Exception{
+         
+		Sessao sessao = buscarSessaoId(idSessao);
+		Usuario usuario = buscaUsuario(sessao.getLogin());
+		
+		
+		return comparaCalendar(idSessao, data, hora, usuario.getListaDeCaronasQueParticipa());
+	}
+	
+	public boolean comparaCalendar(String idSessao, String data, String hora, List<Carona> listaDeCaronas) throws ParseException{
+		
+		Sessao sessao = buscarSessaoId(idSessao);
+		Usuario usuario = buscaUsuario(sessao.getLogin());
+		boolean participaNoHorario = false;
+		
+		GregorianCalendar calendar = new GregorianCalendar();
+		GregorianCalendar calendarAntes = new GregorianCalendar();
+		GregorianCalendar calendarDepois = new GregorianCalendar();
+		GregorianCalendar calendarExigido = new GregorianCalendar();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		Date date = new Date();
+		
+		for (Carona carona : listaDeCaronas) {		  
+		    
+			date = sdf.parse(carona.getData());
+			calendar.setTime(date);
+			
+			String[] horaStr = carona.getHora().split(":");
+			String[] horaStr2 = hora.split(":");
+			calendar.add(calendar.HOUR, Integer.parseInt(horaStr[0]));
+			calendar.add(calendar.MINUTE, Integer.parseInt(horaStr[1]));
+			
+			calendarAntes.setTime(calendar.getTime());
+			calendarDepois.setTime(calendar.getTime());
+			
+			calendarAntes.add(calendarAntes.HOUR, -1);
+			calendarDepois.add(calendarDepois.HOUR, 1);
+			
+			date = sdf.parse(data);
+			calendarExigido.setTime(date);
+			calendarExigido.add(calendarExigido.HOUR, Integer.parseInt(horaStr2[0]));
+			calendarExigido.add(calendarExigido.MINUTE, Integer.parseInt(horaStr2[1]));
+			
+			if (carona.tipoDeCarona().equals("Municipal")) {				         
+
+				if ((calendarExigido.after(calendarAntes) || calendarExigido.equals(calendarAntes)) && (calendarExigido.before(calendarDepois) || calendarExigido.equals(calendarDepois))) {
+					participaNoHorario = true;
+				}
+			}else{
+				
+				calendarAntes.add(calendarAntes.HOUR, -1);
+				calendarDepois.add(calendarDepois.HOUR, 1);
+				 
+				  if ((calendarExigido.after(calendarAntes) || calendarExigido.equals(calendarAntes)) && (calendarExigido.before(calendarDepois) || calendarExigido.equals(calendarDepois))) {
+					  
+					  participaNoHorario = true;
+					}
+			}
+		}
+		return participaNoHorario;
+	}
+	
+	public String incrementaHora(String hora, int valorPraAumentar) throws ParseException{
+		  
+		String[] str = hora.split(":");
+	    int h = Integer.parseInt(str[0]);
+	    int h2 = Integer.parseInt(str[1]);
+      
+     
+	    String horaFinal = null;
+	    if (valorPraAumentar >= 0) {
+	    if (h+valorPraAumentar < 24 && h+valorPraAumentar >= 0) {
+	        h = h+valorPraAumentar;
+	        horaFinal = h+":"+h2;
+		}
+	     }else{
+	    	 if (h+valorPraAumentar >= 0) {
+	 	        h = h+valorPraAumentar;
+	 	       horaFinal = h+":"+h2;
+	        }
+	     }
+     return horaFinal;
 	}
 	
 	/**
@@ -430,6 +531,7 @@ public class SistemaDeCarona2 {
 			String destino, String cidade, String data, String hora,
 			String vagas) throws Exception {
 		excecaoDeCriacaoDeCarona(idDaSessao, origem, destino, data, hora, vagas);
+		excecaoCidade(cidade);
 		Sessao sessao = buscarSessaoId(idDaSessao);
 		int vagasInt = Integer.parseInt(vagas);
 		Carona novaCarona = new CaronaMunicipal(origem, destino, cidade,
@@ -438,9 +540,6 @@ public class SistemaDeCarona2 {
 		listaDeCaronas.add(novaCarona);//
 		listaDeCaronasMunicipais.add((CaronaMunicipal) novaCarona);
 
-		/*String login = sessao.getLogin();
-		String idCarona = novaCarona.getIdDaCarona();
-		addCaronaNoHistorico(login, idCarona);*/
 
 		Usuario usuario = buscaUsuario(sessao.getLogin());
 		usuario.addCarona(novaCarona);
@@ -536,30 +635,25 @@ public class SistemaDeCarona2 {
     * @throws Exception
     */
 	public void enviaMensagem(Mensagem mensagem) throws Exception {
-		//expect "[Carona cadastrada no dia 23/06/2012, Ã s 16:00 de acordo com os seus interesses registrados. Entrar em contato com jucaPeroba@gmail.com]" verificarMensagensPerfil idSessao=${sessaoZezito}
-		/*Sessao sessao = buscarSessaoId(idSessao);
-		Usuario usuario = buscaUsuario(sessao.getLogin());
-		String mensagem = "Carona cadastrada no dia " + data + ", Às " + hora + " de acordo com os seus interesses registrados." +
-							" Entrar em contato com " + usuario.getEmail();*/
-		
+	
 		Usuario destinatario = buscaUsuario(mensagem.getDestinatario());
 		destinatario.addMensagem(mensagem);
 	}
 	
 	public void enviaEmail(String idSessao, String emailDestinatario, String mensagem) {		
-	  	EmailPropriedades eP = new EmailPropriedades();
+	  	MailJava eP = new MailJava();
         //configuracoes de envio
         eP.setSmtpHostMail("smtp.gmail.com");
         eP.setSmtpPortMail("587");
         eP.setSmtpAuth("true");
         eP.setSmtpStarttls("true");
-        eP.setUserMail("email");
+        eP.setUserMail("sistemadecaronas@gmail.com");
         eP.setFromNameMail("Sistema de carona");
-        eP.setPassMail("senha");
+        eP.setPassMail("12345654321ab");
         eP.setCharsetMail("ISO-8859-1");
         eP.setSubjectMail("JavaMail");
         eP.setBodyMail(mensagem);
-        eP.setTypeTextMail(EmailPropriedades.TYPE_TEXT_HTML);
+        eP.setTypeTextMail(MailJava.TYPE_TEXT_HTML);
         
    	 String[] Arrayservidor = emailDestinatario.split("@");
      String servidorAux = Arrayservidor[1];
@@ -570,7 +664,7 @@ public class SistemaDeCarona2 {
         
         //sete quantos destinatarios desejar
         Map<String, String> map = new HashMap<String, String>();
-        map.put(emailDestinatario, "email hotmail");
+        map.put(emailDestinatario, "email "+servidor);
 
         eP.setToMailsUsers(map);
         
@@ -578,15 +672,13 @@ public class SistemaDeCarona2 {
         
         eP.setFileMails(files);
         
-        EnviaEmail m = new EnviaEmail();
+        MailJavaSender m = new MailJavaSender();
 
 			try {
-				m.enviarEmail(eP);
+				m.senderMail(eP);
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+	     		e.printStackTrace();
 			} catch (MessagingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 	
@@ -1713,7 +1805,10 @@ public class SistemaDeCarona2 {
 	public static void main(String[] args) throws Exception {
 		
 		SistemaDeCarona2 s = getInstanceOf();
-		s.criarUsuario("Hudson", "123", "Hudson Daniel", "edesio silva", "hudson@gmail.com");
+	//	s.criarUsuario("Hudson", "123", "Hudson Daniel", "edesio silva", "hudson@gmail.com");
+		
+
+        
 		
 		/*s.criarUsuario("Hudson", "123", "Hudson Daniel", "edesio silva", "hudson@gmail.com");
 		s.criarUsuario("Hudson2", "123", "Hudson Daniel", "edesio silva", "hudson@gmaill.com");

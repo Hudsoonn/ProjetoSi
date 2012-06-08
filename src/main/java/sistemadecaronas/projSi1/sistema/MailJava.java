@@ -3,7 +3,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-public class EmailPropriedades {
+public class MailJava {
 
 	//indica se o formato de texto será texto ou html
     public static final String TYPE_TEXT_PLAIN = "text/plain";
@@ -29,9 +29,7 @@ public class EmailPropriedades {
     //lista com email e nome dos destinatários
     private Map<String, String> toMailsUsers;
     //lista contendo os arquivos anexos
-    private List<String> fileMails;   
-    
- 
+    private List<String> fileMails;
     public String getSmtpHostMail() {
 		return smtpHostMail;
 	}
