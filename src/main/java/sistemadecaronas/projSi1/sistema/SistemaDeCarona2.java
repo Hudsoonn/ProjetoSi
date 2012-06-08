@@ -1334,12 +1334,17 @@ public class SistemaDeCarona2 {
 		Usuario usuarioQueSolicitou = buscaUsuario(sessaoDeQuemSolicitou.getLogin());
 		
 		if (carona.getDonoDaCarona().getLogin().equals(usuario.getLogin())) { //se eh o dono da carona
-				carona.setVagas(carona.getVagas()-1);
+			if (carona.getVagas() > 0 ) {
+				
+			
+			    carona.setVagas(carona.getVagas()-1);
 			//	addhistoricoVagasEmCaronas(usuarioQueSolicitou.getLogin(), solicitacao.getIdCarona());
 				carona.removeSolicitacao(solicitacao); // remove a solicitacao pq ja foi aceita
 				usuarioQueSolicitou.addCaronaQueParticipa(carona);
 				carona.addParticipante(usuarioQueSolicitou);
-			
+			}else{
+				throw new Exception("solicitacao rejeitada por falta de vagas");
+			}
 		}
 			
 

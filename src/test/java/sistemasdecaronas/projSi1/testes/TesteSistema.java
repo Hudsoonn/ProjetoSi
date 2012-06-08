@@ -31,7 +31,6 @@ public class TesteSistema {
 	String sessaoBill;
 	String idCarona4;
 	String idCarona5;
-
 	@Before
 	public void antes() throws Exception {
 		sistema = SistemaDeCarona2.getInstanceOf();
@@ -59,6 +58,7 @@ public class TesteSistema {
 
 		idCarona4 = sistema.cadastrarCarona(sessaoMark, "Campina Grande",
 				"Joao Pessoa", "12/06/2012", "14:00", "3");
+
 		idCarona5 = sistema.cadastrarCarona(sessaoMark, "Lagoa Seca", "Recife",
 				"12/07/2013", "23:00", "2");
 
@@ -686,6 +686,28 @@ public class TesteSistema {
 
 
 
+	}
+	
+	@Test
+	public void TestaVagasEmCarona() throws Exception{
+		
+		 Usuario usuario = sistema.buscaUsuario("mark");
+		 String idCarona = sistema.cadastrarCarona(sessaoMark, "campina", "jp", "15/07/2012", "14:00", "1");
+		 String idSolicitacao1 = sistema.solicitarVaga(sessaoBill, idCarona);
+		 String idSolicitacao2 = sistema.solicitarVaga(sessaoSteve, idCarona);
+		 
+		 assertEquals(1, sistema.buscaCaronaID(idCarona).getVagas());
+		 sistema.aceitarSolicitacao(sessaoMark, idSolicitacao1);
+		 assertEquals(0, sistema.buscaCaronaID(idCarona).getVagas());
+		 try {
+			 sistema.aceitarSolicitacao(sessaoMark, idSolicitacao2);
+		} catch (Exception e) {
+			assertEquals("solicitacao rejeitada por falta de vagas", e.getMessage());
+		}
+		 assertEquals(0, sistema.buscaCaronaID(idCarona).getVagas()); 
+
+		 
+		 
 	}
 	
 	
