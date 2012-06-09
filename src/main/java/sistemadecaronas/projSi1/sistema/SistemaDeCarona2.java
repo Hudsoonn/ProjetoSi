@@ -19,6 +19,7 @@ import javax.mail.MessagingException;
 import com.thoughtworks.xstream.io.json.JsonWriter.Format;
 
 import sistemadecaronas.projSi1.auxiliar.TrataDatas;
+import sistemadecaronas.projSi1.auxiliar.TrataEmail;
 import sistemadecaronas.projSi1.persistencia.Serializador;
 
 public class SistemaDeCarona2 {
@@ -124,109 +125,6 @@ public class SistemaDeCarona2 {
 		return id;
 
 	}
-
-	// getAtributoUsuario
-	/*public String getAtributoUsuario(String login, String atributo)
-			throws Exception {
-
-		excecaoDeAtributosInvalidos(login, atributo); // lança qualquer excecao
-														// se o login ou o
-														// atributo estiver
-														// incorreto
-
-		if (atributo.equals("nome")) {
-			return buscaUsuario(login).getNome();
-		}
-		if (atributo.equals("endereco")) {
-			return buscaUsuario(login).getEndereco();
-		}
-
-		throw new Exception("error");
-
-	}*/
-	
-    /**
-     * metodo usado para lancar excecao quando um atributo eh invalido
-     * @param login
-     * @param atributo
-     * @throws Exception
-     */
-	public void excecaoDeAtributosInvalidos(String login, String atributo)
-			throws Exception {
-
-		if (login == null || login.equals("")) {
-			throw new Exception("Login inválido");
-		}
-		if (atributo == null || atributo.equals("")) {
-			throw new Exception("Atributo inválido");
-		}
-
-		if (!atributo.equals("nome") && !atributo.equals("endereco")
-				&& !atributo.equals("login") && !atributo.equals("senha")
-				&& !atributo.equals("email")) {
-			throw new Exception("Atributo inexistente");
-		}
-
-		if (buscaUsuario(login) == null) {
-			throw new Exception("Usuário inexistente");
-		}
-	}
-    
-	/*public String getAtributoCarona(String idDaCarona, String atributo)
-			throws Exception {
-		String saida = "";
-		excecaoDeAtributosCaronaInvalidos(idDaCarona, atributo);
-
-		Carona carona = buscaCaronaID(idDaCarona);
-
-		if (atributo.equals("origem")) {
-			saida = carona.getOrigem();
-		}
-		if (atributo.equals("destino")) {
-			saida = carona.getDestino();
-		}
-		if (atributo.equals("data")) {
-			saida = carona.getData();
-		}
-
-		if (atributo.equals("vagas")) {
-			saida = Integer.toString(carona.getVagas());
-		}
-
-		if (atributo.equals("Ponto de Encontro")) {
-			if (!carona.getPontoDeEncontro().isEmpty()) {
-				saida = carona.getPontoDeEncontro().toString();
-				saida = saida.replace("[", "");
-				saida = saida.replace("]", "");
-
-			}
-
-		}
-
-		// aceita o primeiro que achar e depois sai.
-		return saida;
-	}*/
-    
-	 // metodo nao precisa existir ja que o getAtributosCarona so serve para o easyAccept 
-	
-	
-	/*public void excecaoDeAtributosCaronaInvalidos(String idDaCarona,
-			String atributo) throws Exception {
-
-		if (idDaCarona == null || idDaCarona.equals("")) {
-
-			throw new Exception("Identificador do carona é inválido");
-		}
-		if (buscaCaronaID(idDaCarona) == null) {
-			throw new Exception("Item inexistente");
-		} else if (atributo == null || atributo.equals("")) {
-			throw new Exception("Atributo inválido");
-		} else if (!atributo.equals("origem") && !atributo.equals("destino")
-				&& !atributo.equals("data") && !atributo.equals("vagas")
-				&& !atributo.equals("Ponto de Encontro")) {
-			throw new Exception("Atributo inexistente");
-		}
-	}*/
    
 	/**
 	 * metodo que lanca excecao durante a criacao de uma carona
@@ -329,7 +227,7 @@ public class SistemaDeCarona2 {
 			throw new Exception("Nome inválido");
 		}
 
-		if (email == null || email.equals("")) {
+		if (email == null || email.equals("") || !TrataEmail.emailValido(email)) {
 			throw new Exception("Email inválido");
 		}
 
@@ -1184,7 +1082,7 @@ public class SistemaDeCarona2 {
 		Usuario usuario = buscaUsuario(sessao.getLogin());
 		Carona carona = buscaCaronaID(idCarona);
 		Solicitacao solicitacao = new Solicitacao(idSessao, idCarona, ponto);
-		excecaoSolicitacao(ponto, carona);
+		excecaoSolicitacaoPontoEncontro(ponto, carona);
         
 		if (!(carona.getDonoDaCarona().getLogin().equals(usuario.getLogin()))) { // quem pede uma vaga nao pode ser o dono
 			if (!usuario.getListaDeCaronasQueParticipa().contains(carona)) { // se o usuario nao esta na carona
@@ -1218,18 +1116,21 @@ public class SistemaDeCarona2 {
         
         if (!(usuario.getLogin().equals(carona.getDonoDaCarona().getLogin()))) { // se nao eh o dono que esta pedindo carona
         	if (!usuario.getListaDeCaronasQueParticipa().contains(carona)) {
+        		if (!temCaronaNoHorario(idSessao, carona.getData(), carona.getHora(), usuario.getListaDeCaronasDoUsuario()) && !participaDeCaronaNoHorario(idSessao, carona.getData(), carona.getHora(), usuario.getListaDeCaronasQueParticipa())) {			
 	        	if (carona.getVagas() > 0) {
 	        		carona.addSolicitacao(solicitacao);
 				}else{
 					throw new Exception("não há mais vagas na carona");
 				}
-	
+	        	
+        		}else{
+            	throw new Exception("o usuário já tem ou paticipa de carona num horario proximo");
+        	   } 
 			}else{
 				throw new Exception("o usuário já esta na carona");
-			}
-	      
+			}      	
         }else{
-        	throw new Exception("o usuário eh o dono da carona");
+        	throw new Exception("o usuário é o dono da carona");
         }
 
 		return solicitacao.getIdSolicitacao();
@@ -1537,7 +1438,7 @@ public class SistemaDeCarona2 {
 
 	}
 
-	public void excecaoSolicitacao(String ponto, Carona carona)
+	public void excecaoSolicitacaoPontoEncontro(String ponto, Carona carona)
 			throws Exception {
 		boolean pontoValido = false;
 		for (PontoDeEncontro ponto2 : carona.getPontoDeEncontro()) {

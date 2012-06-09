@@ -710,6 +710,34 @@ public class TesteSistema {
 		 
 	}
 	
+	@Test
+	public void testaSolicitacao() throws Exception{
+		
+		String idSolicitacao = sistema.solicitarVaga(sessaoBill, idCarona4);
+		sistema.aceitarSolicitacao(sessaoMark, idSolicitacao);
+		
+		String idCarona = sistema.cadastrarCarona(sessaoSteve, "Campina", "Caruaru", "12/06/2012", "15:00", "2");
+		try {
+			sistema.solicitarVaga(sessaoBill, idCarona);
+		} catch (Exception e) {
+			assertEquals("o usuário já tem ou paticipa de carona num horario proximo", e.getMessage());
+		}
+		
+		Carona carona = sistema.buscaCaronaID(idCarona);
+		carona.setHora("20:00");
+		String idSolicitacao2 = sistema.solicitarVaga(sessaoBill, idCarona);
+		sistema.aceitarSolicitacao(sessaoSteve, idSolicitacao2);
+		
+		assertEquals(2, sistema.buscaUsuario("bill").getListaDeCaronasQueParticipa().size());
+	
+		
+		
+		
+		
+
+		
+	}
+	
 	
 	
 	
