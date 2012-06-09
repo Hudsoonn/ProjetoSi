@@ -13,7 +13,7 @@ import java.util.List;
 
 import sistemadecaronas.projSi1.auxiliar.TrataDatas;
 import sistemadecaronas.projSi1.persistencia.Serializador;
-import sistemadecaronas.projSi1.sistema.SistemaDeCarona2.mensagensDoSistema;
+import sistemadecaronas.projSi1.sistema.SistemaDeCarona.mensagensDoSistema;
 
 public class SistemaDeCaronaEasy {
 

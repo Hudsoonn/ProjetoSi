@@ -18,14 +18,14 @@ import sistemadecaronas.projSi1.sistema.Interesse;
 import sistemadecaronas.projSi1.sistema.Mensagem;
 import sistemadecaronas.projSi1.sistema.PontoDeEncontro;
 import sistemadecaronas.projSi1.sistema.SistemaDeCarona;
-import sistemadecaronas.projSi1.sistema.SistemaDeCarona2;
+import sistemadecaronas.projSi1.sistema.SistemaDeCarona;
 import sistemadecaronas.projSi1.sistema.Solicitacao;
 import sistemadecaronas.projSi1.sistema.Sugestao;
 import sistemadecaronas.projSi1.sistema.Usuario;
 
 public class TesteSistema {
 
-	SistemaDeCarona2 sistema;
+	SistemaDeCarona sistema;
 	String sessaoMark;
 	String sessaoSteve;
 	String sessaoBill;
@@ -33,7 +33,7 @@ public class TesteSistema {
 	String idCarona5;
 	@Before
 	public void antes() throws Exception {
-		sistema = SistemaDeCarona2.getInstanceOf();
+		sistema = SistemaDeCarona.getInstanceOf();
 		sistema.criarUsuario("mark", "m@rk", "Mark Zuckerberg",
 				"Palo Alto, California", "mark@facebook.com");
 		sistema.criarUsuario("steve", "5t3v3", "Steven Paul Jobs",
@@ -103,7 +103,7 @@ public class TesteSistema {
 	}
 
 	@Test
-	public void testeGetAtributoUsuario() throws Exception {
+	public void testaGetAtributoUsuario() throws Exception {
 		assertEquals("Mark Zuckerberg",sistema.buscaUsuario("mark").getNome());
 		assertEquals("Palo Alto, California",sistema.buscaUsuario("mark").getEndereco());
 		assertEquals("mark@facebook.com",sistema.buscaUsuario("mark").getEmail());
@@ -195,7 +195,7 @@ public class TesteSistema {
 	@Test
 	public void testaLocalizarCarona() throws Exception {
 		List<Carona> resp = new ArrayList<Carona>();
-		assertEquals(resp, sistema.localizarCarona(sessaoMark, "São Francisco",
+		assertEquals(resp, sistema.localizarCaronaInterMunicipal(sessaoMark, "São Francisco",
 				"Palo Alto"));
 	}
 
@@ -239,7 +239,7 @@ public class TesteSistema {
 	}
 
 	@Test
-	public void sugerirPontoEncontro() throws Exception {
+	public void testaSugerirPontoEncontro() throws Exception {
 		Carona carona = sistema.buscaCaronaID(idCarona4);
 		assertEquals(0, carona.getSugestoes().size());
 		
@@ -728,14 +728,24 @@ public class TesteSistema {
 		String idSolicitacao2 = sistema.solicitarVaga(sessaoBill, idCarona);
 		sistema.aceitarSolicitacao(sessaoSteve, idSolicitacao2);
 		
-		assertEquals(2, sistema.buscaUsuario("bill").getListaDeCaronasQueParticipa().size());
-	
-		
-		
-		
-		
+		assertEquals(2, sistema.buscaUsuario("bill").getListaDeCaronasQueParticipa().size());		
 
 		
+	}
+	
+	@Test
+	
+	public void testaLocalizarCaronas() throws Exception{
+		
+		assertEquals(1, sistema.localizarCaronaInterMunicipal(sessaoMark, "Campina Grande", "Joao Pessoa").size());
+		assertEquals(1, sistema.localizarCarona(sistema.listaDeCaronasInterMunicipais, sessaoMark, "Campina Grande", "Joao Pessoa").size());
+		assertEquals(0, sistema.localizarCarona(sistema.listaDeCaronasMunicipais, sessaoMark, "Campina Grande", "Joao Pessoa").size());
+		
+		sistema.cadastrarCaronaMunicipal(sessaoMark, "bodocongo", "centro", "campina grande", "15/07/2012", "14:00", "3");
+		
+		assertEquals(0, sistema.localizarCarona(sistema.listaDeCaronasInterMunicipais, sessaoMark, "bodocongo", "centro").size());
+		assertEquals(1, sistema.localizarCarona(sistema.listaDeCaronasMunicipais, sessaoMark, "bodocongo", "centro").size());
+		assertEquals(1, sistema.localizarCaronaMunicipal(sessaoMark, "bodocongo", "centro", "campina grande").size());
 	}
 	
 	

@@ -7,7 +7,7 @@
       <nome>Mark Zuckerberg</nome>
       <endereco>Palo Alto, California</endereco>
       <email>mark@facebook.com</email>
-      <id>c9a79c79-f3df-4ba0-9f11-681e501378b3</id>
+      <id>694ed9ff-8e73-4e60-8950-409495d4bdb4</id>
       <listaDeCaronasQueParticipa/>
       <listaDeCaronasDoUsuario>
         <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal reference="../../.."/>
@@ -22,7 +22,7 @@
           <destino>JoÃ£o Pessoa</destino>
           <data>04/06/2012</data>
           <hora>16:00</hora>
-          <idDaCarona>8d1085f3-37b2-4714-a773-5d7d618a9ff4</idDaCarona>
+          <idDaCarona>dc31e22b-6a24-42ee-9d91-90de7a4945f4</idDaCarona>
           <vagas>2</vagas>
           <pontoDeEncontro/>
         </sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
@@ -43,8 +43,8 @@
     <listaDeSolicitacao>
       <sistemadecaronas.projSi1.sistema.Solicitacao>
         <idSessao></idSessao>
-        <idCarona>833e9c9d-12d9-4857-9356-be93d38fc201</idCarona>
-        <idSolicitacao>a2183136-24f1-4e6b-9c56-ad9d5d244418</idSolicitacao>
+        <idCarona>23088c64-ef56-4380-9e7d-bac2b279f3b5</idCarona>
+        <idSolicitacao>1fd15807-298c-4002-8b64-36109bd85a76</idSolicitacao>
       </sistemadecaronas.projSi1.sistema.Solicitacao>
     </listaDeSolicitacao>
     <listaDeParticipantes/>
@@ -52,7 +52,7 @@
     <destino>JoÃ£o Pessoa</destino>
     <data>02/06/2012</data>
     <hora>12:00</hora>
-    <idDaCarona>833e9c9d-12d9-4857-9356-be93d38fc201</idDaCarona>
+    <idDaCarona>23088c64-ef56-4380-9e7d-bac2b279f3b5</idDaCarona>
     <vagas>1</vagas>
     <pontoDeEncontro/>
   </sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
