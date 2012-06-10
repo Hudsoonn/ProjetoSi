@@ -41,7 +41,7 @@ public static boolean isDataValida(String dataRecebida) {
 		Calendar calendar = new GregorianCalendar();
 		Calendar calendar2 = new GregorianCalendar();
 		
-	    //calendar2.set(calendar2.YEAR, calendar2.MONTH, calendar2.DATE);
+	   // calendar2.set(calendar2.YEAR, calendar2.MONTH, calendar2.DATE);
 		String[] arrayDataRecebida = dataRecebida.split("/");
 		
 		Pattern pt = Pattern.compile("[0-9]{2}[/][0-9]{2}[/][0-9]{4}");
@@ -57,7 +57,7 @@ public static boolean isDataValida(String dataRecebida) {
 			
 			calendar.set(ano,mes,dia);
 			
-			calendar2 = calendar;
+	
            if (calendar.before(calendar2)) {
 				dataBoolean = false;
 			}

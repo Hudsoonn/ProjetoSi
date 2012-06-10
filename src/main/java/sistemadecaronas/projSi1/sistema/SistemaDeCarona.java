@@ -33,10 +33,13 @@ public class SistemaDeCarona {
 	public List<Carona> listaDeCaronasMunicipais = new ArrayList<Carona>();
 	public List<Sessao> listaDeSessoesAbertas = new ArrayList<Sessao>();
 	public List<Interesse> listaDeInteresses = new ArrayList<Interesse>();
+	ThreadForSave<Usuario> thredSalvaUsuarios;
+	ThreadForSave<Carona> thredSalvaCaronas;
+	ThreadForSave<Interesse> thredSalvaInteresses;
 	//private boolean desistirSolicitacao;
 	private static SistemaDeCarona sistemaDeCarona = null;
 
-	private SistemaDeCarona() {
+	private SistemaDeCarona(){
 	}
     
 	public static SistemaDeCarona getInstanceOf(){
@@ -55,8 +58,12 @@ public class SistemaDeCarona {
 
 		Usuario novoUsuario = new Usuario(login, senha, nome, endereco, email);
 		listaDeUsuarios.add(novoUsuario);
-
+		
+		thredSalvaUsuarios = new ThreadForSave<Usuario>("Usuarios", listaDeUsuarios);
+		thredSalvaUsuarios.start();
 	}
+	
+	
 
 	public void encerrarSistema() {
 
@@ -310,6 +317,9 @@ public class SistemaDeCarona {
 
 		Usuario usuario = buscaUsuario(sessao.getLogin());
 		usuario.addCarona(novaCarona);
+		
+		thredSalvaCaronas = new ThreadForSave<Carona>("Caronas", listaDeCaronas);
+		thredSalvaCaronas.start();
 		
 		//Verificar se existe interesse
 		verificaInteresse(idDaSessao, origem, destino, data, hora);
@@ -1217,13 +1227,19 @@ public class SistemaDeCarona {
 		Sessao sessaoDeQuemSolicitou = buscarSessaoId(solicitacao.getIdSessao());
 	    Usuario usuarioQueSolicitou = buscaUsuario(sessaoDeQuemSolicitou.getLogin());
 		if (sessao.getLogin().equals(carona.getDonoDaCarona().getLogin())) { // se eh o dono da carona e ha vagas na carona
+			if (carona.getVagas() > 0 ) {
 			carona.setVagas(carona.getVagas() - 1); // diminui vaga na carona
           //  addhistoricoVagasEmCaronas(usuarioQueSolicitou.getLogin(), carona.getIdDaCarona());
 			carona.removeSolicitacao(solicitacao); // remove a solicitacao pq ja foi aceita
 			usuarioQueSolicitou.addCaronaQueParticipa(carona);
 			carona.addParticipante(usuarioQueSolicitou);
+			enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi aceita!.");
 		//	carona.addPontoDeEncontro(solicitacao.getPonto()); //adiciona o ponto de encontro
 
+			}else{			
+				enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi rejeitada por falta de vagas.");
+				throw new Exception("solicitacao rejeitada por falta de vagas");		
+			}
 		}
 	}
     /**
@@ -1257,6 +1273,7 @@ public class SistemaDeCarona {
 				carona.addParticipante(usuarioQueSolicitou);
 			   enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi aceita!.");
 			}else{
+				enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi rejeitada por falta de vagas.");
 				throw new Exception("solicitacao rejeitada por falta de vagas");
 			}
 		}
@@ -1680,6 +1697,9 @@ public class SistemaDeCarona {
 		excecaoCadastrarInteresse(idSessao, origem, destino, data);
 		Interesse interesse = new Interesse(idSessao, origem, destino, data, horaInicial, horaFim);
 		listaDeInteresses.add(interesse);
+		
+		thredSalvaInteresses = new ThreadForSave<Interesse>("Interesses", listaDeInteresses);
+		thredSalvaInteresses.start();
 		return interesse.getIdInteresse();
 	}
 	
@@ -1734,13 +1754,15 @@ public class SistemaDeCarona {
 		
 		SistemaDeCarona s = getInstanceOf();
 		s.criarUsuario("Hudson", "123", "Hudson Daniel", "edesio silva", "hudson@gmail.com");
-		s.criarUsuario("Danilo", "123", "danilo gomes", "edesio silva", "dnlgomes93@gmail.com");
+		s.criarUsuario("Danilo", "123", "danilo gomes", "edesio silva", "dnlgomes9341fdfsf@gmail.com");
 		String idSessao = s.abrirSessao("Hudson", "123");
 		String idSessao2 = s.abrirSessao("Danilo", "123");
+		System.out.println("aqui");
 		String idCarona  = s.cadastrarCarona(idSessao, "campina", "caruaru", "12/07/2012", "14:00", "3");
 	    String idSolicitacao = s.solicitarVaga(idSessao2, idCarona);
 	    s.aceitarSolicitacao(idSessao, idSolicitacao);
 	    
+
 		
 
         
@@ -1800,5 +1822,6 @@ public class SistemaDeCarona {
 		*/
 		
 	}
+
 
 }

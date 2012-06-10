@@ -1,46 +1,51 @@
 <list>
   <sistemadecaronas.projSi1.sistema.Usuario>
-    <login>mark</login>
-    <senha>m@rk</senha>
-    <nome>Mark Zuckerberg</nome>
-    <endereco>Palo Alto, California</endereco>
-    <email>mark@facebook.com</email>
-    <id>694ed9ff-8e73-4e60-8950-409495d4bdb4</id>
+    <login>Hudson</login>
+    <senha>123</senha>
+    <nome>Hudson Daniel</nome>
+    <endereco>edesio silva</endereco>
+    <email>hudson@gmail.com</email>
+    <id>25205b58-70a8-473b-bc91-729d1abd853e</id>
     <listaDeCaronasQueParticipa/>
     <listaDeCaronasDoUsuario>
       <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
         <TIPO__CARONA>InterMunicipal</TIPO__CARONA>
         <donoDaCarona reference="../../.."/>
-        <listaDeSolicitacaoAceitas/>
-        <listaDeSugestoes/>
-        <listaDeSolicitacao>
+        <listaDeSolicitacaoAceitas>
           <sistemadecaronas.projSi1.sistema.Solicitacao>
-            <idSessao></idSessao>
-            <idCarona>23088c64-ef56-4380-9e7d-bac2b279f3b5</idCarona>
-            <idSolicitacao>1fd15807-298c-4002-8b64-36109bd85a76</idSolicitacao>
+            <idSessao>16110a5c-7853-4d21-b1b0-ce93c6b3d0f8</idSessao>
+            <idCarona>7a16e5d8-b93f-4d11-b4df-1fb7012dd03f</idCarona>
+            <idSolicitacao>be0315b2-c03c-484e-949b-3a66012985a9</idSolicitacao>
           </sistemadecaronas.projSi1.sistema.Solicitacao>
-        </listaDeSolicitacao>
-        <listaDeParticipantes/>
-        <origem>Campina Grande</origem>
-        <destino>JoÃ£o Pessoa</destino>
-        <data>02/06/2012</data>
-        <hora>12:00</hora>
-        <idDaCarona>23088c64-ef56-4380-9e7d-bac2b279f3b5</idDaCarona>
-        <vagas>1</vagas>
-        <pontoDeEncontro/>
-      </sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
-      <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
-        <TIPO__CARONA>InterMunicipal</TIPO__CARONA>
-        <donoDaCarona reference="../../.."/>
-        <listaDeSolicitacaoAceitas/>
+        </listaDeSolicitacaoAceitas>
         <listaDeSugestoes/>
         <listaDeSolicitacao/>
-        <listaDeParticipantes/>
-        <origem>Campina Grande</origem>
-        <destino>JoÃ£o Pessoa</destino>
-        <data>04/06/2012</data>
-        <hora>16:00</hora>
-        <idDaCarona>dc31e22b-6a24-42ee-9d91-90de7a4945f4</idDaCarona>
+        <listaDeParticipantes>
+          <sistemadecaronas.projSi1.sistema.Usuario>
+            <login>Danilo</login>
+            <senha>123</senha>
+            <nome>danilo gomes</nome>
+            <endereco>edesio silva</endereco>
+            <email>dnlgomes9341fdfsf@gmail.com</email>
+            <id>16110a5c-7853-4d21-b1b0-ce93c6b3d0f8</id>
+            <listaDeCaronasQueParticipa>
+              <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal reference="../../../.."/>
+            </listaDeCaronasQueParticipa>
+            <listaDeCaronasDoUsuario/>
+            <listaDeMensagens/>
+            <presencaEmCaronas>0</presencaEmCaronas>
+            <faltasEmCaronas>0</faltasEmCaronas>
+            <caronasNaoFuncionaram>0</caronasNaoFuncionaram>
+            <caronasSeguras>0</caronasSeguras>
+            <historicoVagasEmCaronas/>
+            <historicoCaronas/>
+          </sistemadecaronas.projSi1.sistema.Usuario>
+        </listaDeParticipantes>
+        <origem>campina</origem>
+        <destino>caruaru</destino>
+        <data>12/07/2012</data>
+        <hora>14:00</hora>
+        <idDaCarona>7a16e5d8-b93f-4d11-b4df-1fb7012dd03f</idDaCarona>
         <vagas>2</vagas>
         <pontoDeEncontro/>
       </sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
@@ -51,25 +56,7 @@
     <caronasNaoFuncionaram>0</caronasNaoFuncionaram>
     <caronasSeguras>0</caronasSeguras>
     <historicoVagasEmCaronas/>
-    <historicoCaronas>
-      <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal reference="../../listaDeCaronasDoUsuario/sistemadecaronas.projSi1.sistema.CaronaIntermunicipal"/>
-      <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal reference="../../listaDeCaronasDoUsuario/sistemadecaronas.projSi1.sistema.CaronaIntermunicipal[2]"/>
-    </historicoCaronas>
-  </sistemadecaronas.projSi1.sistema.Usuario>
-  <sistemadecaronas.projSi1.sistema.Usuario>
-    <login>bill</login>
-    <senha>bilz@a</senha>
-    <nome>Bill Clinton</nome>
-    <endereco>Hollywood, California</endereco>
-    <email>bill@gmail.com</email>
-    <listaDeCaronasQueParticipa/>
-    <listaDeCaronasDoUsuario/>
-    <listaDeMensagens/>
-    <presencaEmCaronas>0</presencaEmCaronas>
-    <faltasEmCaronas>0</faltasEmCaronas>
-    <caronasNaoFuncionaram>0</caronasNaoFuncionaram>
-    <caronasSeguras>0</caronasSeguras>
-    <historicoVagasEmCaronas/>
     <historicoCaronas/>
   </sistemadecaronas.projSi1.sistema.Usuario>
+  <sistemadecaronas.projSi1.sistema.Usuario reference="../sistemadecaronas.projSi1.sistema.Usuario/listaDeCaronasDoUsuario/sistemadecaronas.projSi1.sistema.CaronaIntermunicipal/listaDeParticipantes/sistemadecaronas.projSi1.sistema.Usuario"/>
 </list>

@@ -6,14 +6,13 @@ import java.util.ArrayList;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.Formatter;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import sistemadecaronas.projSi1.auxiliar.TrataDatas;
 import sistemadecaronas.projSi1.persistencia.Serializador;
-import sistemadecaronas.projSi1.sistema.SistemaDeCarona.mensagensDoSistema;
+
 
 public class SistemaDeCaronaEasy {
 

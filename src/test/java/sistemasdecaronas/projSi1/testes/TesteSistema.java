@@ -2,12 +2,9 @@ package sistemasdecaronas.projSi1.testes;
 
 import static org.junit.Assert.*;
 
-import java.awt.HeadlessException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-
 
 
 import org.junit.*;
@@ -18,7 +15,7 @@ import sistemadecaronas.projSi1.sistema.Interesse;
 import sistemadecaronas.projSi1.sistema.Mensagem;
 import sistemadecaronas.projSi1.sistema.PontoDeEncontro;
 import sistemadecaronas.projSi1.sistema.SistemaDeCarona;
-import sistemadecaronas.projSi1.sistema.SistemaDeCarona;
+
 import sistemadecaronas.projSi1.sistema.Solicitacao;
 import sistemadecaronas.projSi1.sistema.Sugestao;
 import sistemadecaronas.projSi1.sistema.Usuario;
@@ -691,7 +688,7 @@ public class TesteSistema {
 	@Test
 	public void TestaVagasEmCarona() throws Exception{
 		
-		 Usuario usuario = sistema.buscaUsuario("mark");
+	
 		 String idCarona = sistema.cadastrarCarona(sessaoMark, "campina", "jp", "15/07/2012", "14:00", "1");
 		 String idSolicitacao1 = sistema.solicitarVaga(sessaoBill, idCarona);
 		 String idSolicitacao2 = sistema.solicitarVaga(sessaoSteve, idCarona);
@@ -733,8 +730,7 @@ public class TesteSistema {
 		
 	}
 	
-	@Test
-	
+	@Test	
 	public void testaLocalizarCaronas() throws Exception{
 		
 		assertEquals(1, sistema.localizarCaronaInterMunicipal(sessaoMark, "Campina Grande", "Joao Pessoa").size());
@@ -747,6 +743,11 @@ public class TesteSistema {
 		assertEquals(1, sistema.localizarCarona(sistema.listaDeCaronasMunicipais, sessaoMark, "bodocongo", "centro").size());
 		assertEquals(1, sistema.localizarCaronaMunicipal(sessaoMark, "bodocongo", "centro", "campina grande").size());
 	}
+	
+
+	
+	
+	
 	
 	
 	
