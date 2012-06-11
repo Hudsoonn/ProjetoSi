@@ -149,26 +149,26 @@ public class SistemaDeCarona {
 			throws Exception {
         
 		if (idDaSessao == null || idDaSessao.equals("")) {
-			throw new Exception("Sessão inválida");
+			throw new SessaoInvalidaException("Sessão inválida");
 		}
 
 		if (!isSessaoAberta(idDaSessao)) {
-			throw new Exception("Sessão inexistente");
+			throw new SessaoInvalidaException("Sessão inexistente");
 		}
 		if (origem == null || origem.equals("")) {
-			throw new Exception("Origem inválida");
+			throw new OrigemInvalidaException("Origem inválida");
 		}
 
 		if (destino == null || destino.equals("")) {
-			throw new Exception("Destino inválido");
+			throw new DestinoInvalidoException("Destino inválido");
 		}
 		// !auxiliar.TrataDatas.isDataValida(data)
 		if (data == null || data.equals("") || !TrataDatas.isDataValida(data)) {
-			throw new Exception("Data inválida");
+			throw new DataInvalidaException("Data inválida");
 		}
 		// !auxiliar.TrataDatas.horaValida(hora)
 		if (hora == null || hora.equals("") || !TrataDatas.horaValida(hora)) {
-			throw new Exception("Hora inválida");
+			throw new HoraInvalidaException("Hora inválida");
 		}
 
 		if (vagas == null || vagas.equals("")) {
@@ -229,19 +229,23 @@ public class SistemaDeCarona {
 	public void excecaoCriarUsuario(String login, String senha, String nome,
 			String endereco, String email) throws Exception {
 		if (login == null || login.equals("")) {
-			throw new Exception("Login inválido");
+			throw new LoginInvalidoException("Login inválido");
 		}
 		if (nome == null || nome.equals("")) {
-			throw new Exception("Nome inválido");
+			throw new NomeInvalidoException("Nome inválido");
+		}
+		
+		if (senha.equals("") || senha == null) {
+			throw new SenhaInvalidaException("Senha inválida");
 		}
 
 		if (email == null || email.equals("") || !TrataEmail.emailValido(email)) {
-			throw new Exception("Email inválido");
+			throw new EmailInvalidoException("Email inválido");
 		}
 
 		for (int i = 0; i < listaDeUsuarios.size(); i++) {
 			if (listaDeUsuarios.get(i).getLogin().equals(login)) {
-				throw new Exception("Já existe um usuário com este login");
+				throw new LoginInvalidoException("Já existe um usuário com este login");
 			}
 			if (listaDeUsuarios.get(i).getEmail().equals(email)) {
 				throw new Exception("Já existe um usuário com este email");
@@ -835,33 +839,20 @@ public class SistemaDeCarona {
 	public void excecaoLocalizarCarona(String idDaSessao, String origem,
 			String destino) throws Exception {
 		if (idDaSessao == null) {
-			throw new Exception("Sessão inválida");
+			throw new SessaoInvalidaException("Sessão inválida");
 		}
 		if (idDaSessao.equals("") || !isSessaoAberta(idDaSessao)) {
 
-			throw new Exception("Sessão inexistente");
+			throw new SessaoInvalidaException("Sessão inexistente");
 		}
 
 		if (origem == null) {
-			throw new Exception("Origem Inexistente");
-		} else {
-
-			for (char c : origem.toCharArray()) {
-				if (!Character.isLetter(c) && !Character.isSpaceChar(c)) {
-					throw new Exception("Origem inválida");
-				}
-			}
+			throw new OrigemInvalidaException("Origem Inexistente");
 		}
 
 		if (destino == null) {
-			throw new Exception("Destino Inexistente");
-		} else {
-			for (char c : destino.toCharArray()) {
-				if (!Character.isLetter(c) && !Character.isSpaceChar(c)) {
-					throw new Exception("Destino inválido");
-				}
-			}
-		}
+			throw new DestinoInvalidoException("Destino Inexistente");
+		} 
 
 	}
 	
@@ -1485,7 +1476,7 @@ public class SistemaDeCarona {
      */
 	public void excecaoResponderPontoDeEncontro(String pontos) throws Exception {
 		if (pontos.equals("") || pontos == null) {
-			throw new Exception("Ponto Inválido");
+			throw new PontoInvalidoException("Ponto Inválido");
 		}
 
 	}
@@ -1506,7 +1497,7 @@ public class SistemaDeCarona {
 				}
 		}
 		if (!pontoValido) {
-			throw new Exception("Ponto Inválido");
+			throw new PontoInvalidoException("Ponto Inválido");
 		}
 	}
     
@@ -1820,31 +1811,31 @@ public class SistemaDeCarona {
 			String data) throws Exception {
 		//excecao se as horas forem null???
 		if (origem == null) {
-			throw new EntradasInvalidas("Origem inválida");
+			throw new OrigemInvalidaException("Origem inválida");
 		}
 		
 		if (destino == null) {
-			throw new EntradasInvalidas("Destino inválido");
+			throw new DestinoInvalidoException("Destino inválido");
 		}
 		
 		if ( (data == null || data.equals("")) && ( origem.contains("!") || origem.contains("-") || (destino.contains("!") || (destino.contains("-")) ))) {
-			throw new EntradasInvalidas("Data inválida");
+			throw new DataInvalidaException("Data inválida");
 		}
 		
 		if (idSessao == null || idSessao.equals("")) {
-			throw new EntradasInvalidas("IdSessao inválido");
+			throw new SessaoInvalidaException("IdSessao inválido");
 		}
 		
 		else if(origem.equals("-") || origem.equals("!"))
 		{
-			throw new EntradasInvalidas("Origem inválida");
+			throw new OrigemInvalidaException("Origem inválida");
 
 		}
 
 		
 		else if(destino.contains("-") || destino.contains("!"))
 		{
-			throw new EntradasInvalidas("Destino inválido");
+			throw new DestinoInvalidoException("Destino inválido");
 		}
 
 
