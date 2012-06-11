@@ -5,7 +5,7 @@
     <nome>Mark Zuckerberg</nome>
     <endereco>Palo Alto, California</endereco>
     <email>mark@facebook.com</email>
-    <id>887fbab9-a4cb-47ef-b638-c90d308ae3da</id>
+    <id>c2799679-85b9-42c8-ba0e-346cdacb48b2</id>
     <listaDeCaronasQueParticipa/>
     <listaDeCaronasDoUsuario>
       <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
@@ -13,9 +13,9 @@
         <donoDaCarona reference="../../.."/>
         <listaDeSolicitacaoAceitas>
           <sistemadecaronas.projSi1.sistema.Solicitacao>
-            <idSessao>44755d28-8fc5-4852-aa11-18983cdfb4f6</idSessao>
-            <idCarona>da51682c-1836-4456-b127-6955552496c6</idCarona>
-            <idSolicitacao>9954d9a7-fc08-4805-9ec3-1f9faf0691d8</idSolicitacao>
+            <idSessao>90638beb-a254-4abb-8764-6d7d9a6ecd29</idSessao>
+            <idCarona>6711a340-10f6-4ceb-b6a6-46080382d4ef</idCarona>
+            <idSolicitacao>ee3a056c-29c8-4632-a726-dfc1edcb0278</idSolicitacao>
           </sistemadecaronas.projSi1.sistema.Solicitacao>
         </listaDeSolicitacaoAceitas>
         <listaDeSugestoes/>
@@ -27,7 +27,7 @@
             <nome>William Henry Gates III</nome>
             <endereco>Medina, Washington</endereco>
             <email>bil@apple.com</email>
-            <id>44755d28-8fc5-4852-aa11-18983cdfb4f6</id>
+            <id>90638beb-a254-4abb-8764-6d7d9a6ecd29</id>
             <listaDeCaronasQueParticipa>
               <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal reference="../../../.."/>
             </listaDeCaronasQueParticipa>
@@ -45,7 +45,7 @@
         <destino>Joao Pessoa</destino>
         <data>12/06/2012</data>
         <hora>14:00</hora>
-        <idDaCarona>da51682c-1836-4456-b127-6955552496c6</idDaCarona>
+        <idDaCarona>6711a340-10f6-4ceb-b6a6-46080382d4ef</idDaCarona>
         <vagas>2</vagas>
         <pontoDeEncontro/>
       </sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
@@ -60,7 +60,7 @@
         <destino>Recife</destino>
         <data>12/07/2013</data>
         <hora>23:00</hora>
-        <idDaCarona>3210e57f-c021-4d2d-9d61-1c3b313d78cc</idDaCarona>
+        <idDaCarona>d52abac9-f423-4ed7-9f4b-0147970960d0</idDaCarona>
         <vagas>2</vagas>
         <pontoDeEncontro/>
       </sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
@@ -79,7 +79,7 @@
     <nome>Steven Paul Jobs</nome>
     <endereco>Palo Alto, California</endereco>
     <email>jobs@apple.com</email>
-    <id>f702de52-9c71-4403-8cb4-163eae7b767f</id>
+    <id>6ad04abd-e88d-4f9b-aa56-d928b61cb7f1</id>
     <listaDeCaronasQueParticipa/>
     <listaDeCaronasDoUsuario/>
     <listaDeMensagens/>
