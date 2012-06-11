@@ -2,15 +2,30 @@
   <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
     <TIPO__CARONA>InterMunicipal</TIPO__CARONA>
     <donoDaCarona>
-      <login>Hudson</login>
-      <senha>123</senha>
-      <nome>Hudson Daniel</nome>
-      <endereco>edesio silva</endereco>
-      <email>hudson@gmail.com</email>
-      <id>25205b58-70a8-473b-bc91-729d1abd853e</id>
+      <login>mark</login>
+      <senha>m@rk</senha>
+      <nome>Mark Zuckerberg</nome>
+      <endereco>Palo Alto, California</endereco>
+      <email>mark@facebook.com</email>
+      <id>887fbab9-a4cb-47ef-b638-c90d308ae3da</id>
       <listaDeCaronasQueParticipa/>
       <listaDeCaronasDoUsuario>
         <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal reference="../../.."/>
+        <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
+          <TIPO__CARONA>InterMunicipal</TIPO__CARONA>
+          <donoDaCarona reference="../../.."/>
+          <listaDeSolicitacaoAceitas/>
+          <listaDeSugestoes/>
+          <listaDeSolicitacao/>
+          <listaDeParticipantes/>
+          <origem>Lagoa Seca</origem>
+          <destino>Recife</destino>
+          <data>12/07/2013</data>
+          <hora>23:00</hora>
+          <idDaCarona>3210e57f-c021-4d2d-9d61-1c3b313d78cc</idDaCarona>
+          <vagas>2</vagas>
+          <pontoDeEncontro/>
+        </sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
       </listaDeCaronasDoUsuario>
       <listaDeMensagens/>
       <presencaEmCaronas>0</presencaEmCaronas>
@@ -22,21 +37,21 @@
     </donoDaCarona>
     <listaDeSolicitacaoAceitas>
       <sistemadecaronas.projSi1.sistema.Solicitacao>
-        <idSessao>16110a5c-7853-4d21-b1b0-ce93c6b3d0f8</idSessao>
-        <idCarona>7a16e5d8-b93f-4d11-b4df-1fb7012dd03f</idCarona>
-        <idSolicitacao>be0315b2-c03c-484e-949b-3a66012985a9</idSolicitacao>
+        <idSessao>44755d28-8fc5-4852-aa11-18983cdfb4f6</idSessao>
+        <idCarona>da51682c-1836-4456-b127-6955552496c6</idCarona>
+        <idSolicitacao>9954d9a7-fc08-4805-9ec3-1f9faf0691d8</idSolicitacao>
       </sistemadecaronas.projSi1.sistema.Solicitacao>
     </listaDeSolicitacaoAceitas>
     <listaDeSugestoes/>
     <listaDeSolicitacao/>
     <listaDeParticipantes>
       <sistemadecaronas.projSi1.sistema.Usuario>
-        <login>Danilo</login>
-        <senha>123</senha>
-        <nome>danilo gomes</nome>
-        <endereco>edesio silva</endereco>
-        <email>dnlgomes9341fdfsf@gmail.com</email>
-        <id>16110a5c-7853-4d21-b1b0-ce93c6b3d0f8</id>
+        <login>bill</login>
+        <senha>severino</senha>
+        <nome>William Henry Gates III</nome>
+        <endereco>Medina, Washington</endereco>
+        <email>bil@apple.com</email>
+        <id>44755d28-8fc5-4852-aa11-18983cdfb4f6</id>
         <listaDeCaronasQueParticipa>
           <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal reference="../../../.."/>
         </listaDeCaronasQueParticipa>
@@ -50,12 +65,13 @@
         <historicoCaronas/>
       </sistemadecaronas.projSi1.sistema.Usuario>
     </listaDeParticipantes>
-    <origem>campina</origem>
-    <destino>caruaru</destino>
-    <data>12/07/2012</data>
+    <origem>Campina Grande</origem>
+    <destino>Joao Pessoa</destino>
+    <data>12/06/2012</data>
     <hora>14:00</hora>
-    <idDaCarona>7a16e5d8-b93f-4d11-b4df-1fb7012dd03f</idDaCarona>
+    <idDaCarona>da51682c-1836-4456-b127-6955552496c6</idDaCarona>
     <vagas>2</vagas>
     <pontoDeEncontro/>
   </sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
+  <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal reference="../sistemadecaronas.projSi1.sistema.CaronaIntermunicipal/donoDaCarona/listaDeCaronasDoUsuario/sistemadecaronas.projSi1.sistema.CaronaIntermunicipal[2]"/>
 </list>

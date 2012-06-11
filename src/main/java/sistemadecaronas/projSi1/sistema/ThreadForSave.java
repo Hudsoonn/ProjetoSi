@@ -8,7 +8,6 @@ public class ThreadForSave<T> extends Thread{
 	
 	private Collection<T> colecao;
 	private String nomeArquivo;
-
 	
 	public ThreadForSave(String nomeArquivo, Collection colecao){
 		this.colecao = colecao;
@@ -28,14 +27,13 @@ public class ThreadForSave<T> extends Thread{
 	}
 	
 	public synchronized void salva(String nomeArquivo, Collection colecao){
-		
-		new Serializador<T>().salvar(nomeArquivo, (T) colecao);
+		Serializador.getInstanceOf().salvar(nomeArquivo, (Collection) colecao);
 	}
 
 
 
     
-	public void run(){
+	public synchronized void run(){
 		
 		salva(this.getNomeArquivo(), this.getColecao());
 		

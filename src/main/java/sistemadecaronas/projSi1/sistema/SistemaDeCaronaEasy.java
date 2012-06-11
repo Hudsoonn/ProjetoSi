@@ -50,7 +50,7 @@ public class SistemaDeCaronaEasy {
 
 	public void encerrarSistema() {
 
-		Serializador<Collection> ser = new Serializador<Collection>();
+		Serializador<Collection> ser = Serializador.getInstanceOf();
 		
 		ser.salvar("Usuarios", this.listaDeUsuarios);
 		ser.salvar("Caronas", this.listaDeCaronas);
@@ -1164,7 +1164,7 @@ public class SistemaDeCaronaEasy {
 
 	public void reiniciarSistema() throws Exception {
 
-	    Serializador<Collection> ser = new Serializador<Collection>();
+	    Serializador<Collection> ser = Serializador.getInstanceOf();
 	    
 	    this.listaDeCaronas = (List<Carona>) ser.recuperar("Caronas");
 	    this.listaDeUsuarios  = (List<Usuario>) ser.recuperar("Usuarios");

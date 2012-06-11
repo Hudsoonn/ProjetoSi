@@ -1,4 +1,4 @@
-package sistemasdecaronas.projSi1.easy;
+package sistemadecaronas.projSi1.easy;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collection;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -18,20 +19,29 @@ public class Serializador<T> {
  private XStream xStream;
  private String diretorio;
  private final String FILE_SEPARATOR = System.getProperty("file.separator");
+ private static Serializador serializador = null;
 
-     public Serializador() {
-         this.xStream = new XStream(new DomDriver("UTF-8"));
-        try {
-          new File(new File(".").getCanonicalPath() + FILE_SEPARATOR + "banco").mkdirs();
-          this.diretorio = new File(".").getCanonicalPath() + FILE_SEPARATOR + "banco" + FILE_SEPARATOR;
-        } catch (IOException e) {
-          System.out.println("Erro na persistencia!");
-          e.printStackTrace();
-      }
+     private  Serializador() {	
+		
+    	  this.xStream = new XStream(new DomDriver("UTF-8"));
+         try {
+           new File(new File(".").getCanonicalPath() + FILE_SEPARATOR + "banco").mkdirs();
+           this.diretorio = new File(".").getCanonicalPath() + FILE_SEPARATOR + "banco" + FILE_SEPARATOR;
+         } catch (IOException e) {
+           System.out.println("Erro na persistencia!");
+           e.printStackTrace();
+         }
+     }
+         
+     public  static Serializador getInstanceOf(){
+    	if (serializador == null) {
+		   serializador = new Serializador<Collection>();
+    	 }
+    	 return serializador;
     }
 
 
-      public void salvar(String nomeArquivo, T collection) {
+      public synchronized void salvar(String nomeArquivo, T collection) {
          try {
              new File(diretorio).mkdir();
              FileOutputStream file = new FileOutputStream(diretorio + FILE_SEPARATOR + nomeArquivo + ".xml");
@@ -44,7 +54,7 @@ public class Serializador<T> {
     }
 
         @SuppressWarnings("unchecked")
-        public T recuperar(String nomeArquivo) {
+        public synchronized T recuperar(String nomeArquivo) {
             try {
                XStream reader = new XStream(new DomDriver());
                FileInputStream file = new FileInputStream(diretorio + FILE_SEPARATOR + nomeArquivo + ".xml");

@@ -1,7 +1,6 @@
 package sistemadecaronas.projSi1.sistema;
 
 import java.io.UnsupportedEncodingException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,8 +15,6 @@ import java.util.Map;
 
 import javax.mail.MessagingException;
 
-import com.thoughtworks.xstream.io.json.JsonWriter.Format;
-
 import sistemadecaronas.projSi1.auxiliar.TrataDatas;
 import sistemadecaronas.projSi1.auxiliar.TrataEmail;
 import sistemadecaronas.projSi1.persistencia.Serializador;
@@ -27,16 +24,16 @@ public class SistemaDeCarona {
 	/**
 	 * @param args
 	 */
-	public List<Usuario> listaDeUsuarios = new ArrayList<Usuario>();
+	public List<Usuario> listaDeUsuarios = new  ArrayList<Usuario>();
 	public List<Carona> listaDeCaronas = new ArrayList<Carona>();
 	public List<Carona> listaDeCaronasInterMunicipais = new ArrayList<Carona>();
 	public List<Carona> listaDeCaronasMunicipais = new ArrayList<Carona>();
 	public List<Sessao> listaDeSessoesAbertas = new ArrayList<Sessao>();
 	public List<Interesse> listaDeInteresses = new ArrayList<Interesse>();
-	ThreadForSave<Usuario> thredSalvaUsuarios;
-	ThreadForSave<Carona> thredSalvaCaronas;
-	ThreadForSave<Interesse> thredSalvaInteresses;
-	//private boolean desistirSolicitacao;
+	ThreadForSave<Usuario> threadSalvaUsuarios;
+	ThreadForSave<Carona> threadSalvaCaronas;
+	ThreadEnviaEmail threadEnviaEmail;
+	ThreadForSave<Interesse> threadSalvaInteresses;
 	private static SistemaDeCarona sistemaDeCarona = null;
 
 	private SistemaDeCarona(){
@@ -59,19 +56,23 @@ public class SistemaDeCarona {
 		Usuario novoUsuario = new Usuario(login, senha, nome, endereco, email);
 		listaDeUsuarios.add(novoUsuario);
 		
-		thredSalvaUsuarios = new ThreadForSave<Usuario>("Usuarios", listaDeUsuarios);
-		thredSalvaUsuarios.start();
+		threadSalvaUsuarios = new ThreadForSave<Usuario>("Usuarios", this.listaDeUsuarios);
+		threadSalvaUsuarios.start();
 	}
 	
 	
 
 	public void encerrarSistema() {
 
-		Serializador<Collection> ser = new Serializador<Collection>();
+		Serializador<Collection> ser = Serializador.getInstanceOf();
 		
-		ser.salvar("Usuarios", this.listaDeUsuarios);
-		ser.salvar("Caronas", this.listaDeCaronas);
-		ser.salvar("Interesses", this.listaDeInteresses);
+		
+		ser.salvar("Usuarios", listaDeUsuarios);
+		ser.salvar("Carona", listaDeCaronas);
+		ser.salvar("Interesses", listaDeInteresses);
+	//	ser.salvar("Usuarios", this.listaDeUsuarios);
+	//	ser.salvar("Caronas", this.listaDeCaronas);
+	//	ser.salvar("Interesses", this.listaDeInteresses);
         
 		System.out.println("Sistema Encerrado");
 	}
@@ -318,8 +319,8 @@ public class SistemaDeCarona {
 		Usuario usuario = buscaUsuario(sessao.getLogin());
 		usuario.addCarona(novaCarona);
 		
-		thredSalvaCaronas = new ThreadForSave<Carona>("Caronas", listaDeCaronas);
-		thredSalvaCaronas.start();
+		threadSalvaCaronas = new ThreadForSave<Carona>("Caronas", listaDeCaronas);
+		threadSalvaCaronas.start();
 		
 		//Verificar se existe interesse
 		verificaInteresse(idDaSessao, origem, destino, data, hora);
@@ -349,8 +350,6 @@ public class SistemaDeCarona {
 	
 	public boolean verificaCaronaNoIntervalo(String idSessao, String data, String hora, List<Carona> listaDeCaronas) throws ParseException{
 		
-		Sessao sessao = buscarSessaoId(idSessao);
-		Usuario usuario = buscaUsuario(sessao.getLogin());
 		boolean participaNoHorario = false;
 		
 		GregorianCalendar calendar = new GregorianCalendar();
@@ -548,7 +547,9 @@ public class SistemaDeCarona {
 		destinatario.addMensagem(mensagem);
 	}
 	
-	public void enviaEmail(String idSessao, String emailDestinatario, String mensagem) {		
+	public void enviaEmail(String idSessao, String emailDestinatario, String mensagem) {
+		
+		if (isSessaoAberta(idSessao)) {	
 	  	MailJava eP = new MailJava();
         //configuracoes de envio
         eP.setSmtpHostMail("smtp.gmail.com");
@@ -559,7 +560,7 @@ public class SistemaDeCarona {
         eP.setFromNameMail("Sistema de carona");
         eP.setPassMail("12345654321ab");
         eP.setCharsetMail("ISO-8859-1");
-        eP.setSubjectMail("JavaMail");
+        eP.setSubjectMail("Notificação");
         eP.setBodyMail(mensagem);
         eP.setTypeTextMail(MailJava.TYPE_TEXT_HTML);
         
@@ -589,7 +590,7 @@ public class SistemaDeCarona {
 			} catch (MessagingException e) {
 				e.printStackTrace();
 			}
-	
+		}
 	}
 	
 	public void deletarMensagem(Usuario usuario, Mensagem mensagem){
@@ -1184,7 +1185,13 @@ public class SistemaDeCarona {
 		}
 		return resposta;
 	}
-
+    
+	/**
+	 * busca através do id uma solicitacao na lista 
+	 * @param idSolicitacao
+	 * @return solicitacao encontrada
+	 * @throws Exception
+	 */
 	public Solicitacao buscaSolicitacao(String idSolicitacao) throws Exception {
 		Solicitacao solicitacao = null;
 		for (Carona carona1 : listaDeCaronas) {
@@ -1233,10 +1240,17 @@ public class SistemaDeCarona {
 			carona.removeSolicitacao(solicitacao); // remove a solicitacao pq ja foi aceita
 			usuarioQueSolicitou.addCaronaQueParticipa(carona);
 			carona.addParticipante(usuarioQueSolicitou);
+			
+			
+		//	threadEnviaEmail = new ThreadEnviaEmail(idSessao, usuarioQueSolicitou.getEmail(),  "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi aceita!.");
+		//    threadEnviaEmail.start();
 			enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi aceita!.");
 		//	carona.addPontoDeEncontro(solicitacao.getPonto()); //adiciona o ponto de encontro
 
-			}else{			
+			}else{		
+				
+				//threadEnviaEmail = new ThreadEnviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi rejeitada por falta de vagas.");
+				//threadEnviaEmail.start();
 				enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi rejeitada por falta de vagas.");
 				throw new Exception("solicitacao rejeitada por falta de vagas");		
 			}
@@ -1271,8 +1285,12 @@ public class SistemaDeCarona {
 				carona.removeSolicitacao(solicitacao); // remove a solicitacao pq ja foi aceita
 				usuarioQueSolicitou.addCaronaQueParticipa(carona);
 				carona.addParticipante(usuarioQueSolicitou);
+			//   threadEnviaEmail = new ThreadEnviaEmail(idSessao, usuarioQueSolicitou.getEmail(),  "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi aceita!.");
+			//   threadEnviaEmail.start();
 			   enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi aceita!.");
 			}else{
+			//    threadEmail = new ThreadEnviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi rejeitada por falta de vagas.");
+			//	threadEmail.start();
 				enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi rejeitada por falta de vagas.");
 				throw new Exception("solicitacao rejeitada por falta de vagas");
 			}
@@ -1460,14 +1478,24 @@ public class SistemaDeCarona {
 		return respPonto;
 	}
 
-
+    /**
+     * lanca excecao no metodo responde ponto de encontro
+     * @param pontos
+     * @throws Exception
+     */
 	public void excecaoResponderPontoDeEncontro(String pontos) throws Exception {
 		if (pontos.equals("") || pontos == null) {
 			throw new Exception("Ponto Inválido");
 		}
 
 	}
-
+    
+	/**
+	 * lanca excecao na solicitacao de vaga em um ponto de encontro
+	 * @param ponto
+	 * @param carona
+	 * @throws Exception
+	 */
 	public void excecaoSolicitacaoPontoEncontro(String ponto, Carona carona)
 			throws Exception {
 		boolean pontoValido = false;
@@ -1481,7 +1509,14 @@ public class SistemaDeCarona {
 			throw new Exception("Ponto Inválido");
 		}
 	}
-
+    
+	/**
+	 * 
+	 * @param idSessao
+	 * @param login
+	 * @return string com as informações do usuario
+	 * @throws Exception
+	 */
 	public String visualizarPerfil(String idSessao, String login)
 			throws Exception {
 		String retorno = "";
@@ -1513,10 +1548,13 @@ public class SistemaDeCarona {
 		usuario.addHistoricoVagasEmCaronas(buscaCaronaID(idCarona));
 	}
 
-	
+	/**
+	 * metodo para reiniciar o sistema,povoa as listas com as infomacoes salvas nos arquivos
+	 * @throws Exception
+	 */
 	public void reiniciarSistema() throws Exception {
 
-	    Serializador<Collection> ser = new Serializador<Collection>();
+	    Serializador<Collection> ser = Serializador.getInstanceOf();
 	    
 	    this.listaDeCaronas = (List<Carona>) ser.recuperar("Caronas");
 	    this.listaDeUsuarios  = (List<Usuario>) ser.recuperar("Usuarios");
@@ -1526,16 +1564,14 @@ public class SistemaDeCarona {
 
      
 	}
+    
 
-	public Carona getCaronaUsuario(String idSessao, int indexCarona) {
-		Sessao sessao = buscarSessaoId(idSessao);
-		Usuario usuario = buscaUsuario(sessao.getLogin());
-		Carona carona = usuario.getListaDeCaronasDoUsuario().get(indexCarona);
 
-		return carona;
-	}
-
-	
+	/**
+	 * 
+	 * @param idSessao
+	 * @return lista de caronas de um usuario
+	 */
 	public List<Carona> getCaronasUsuario(String idSessao) {
 
 		Sessao sessao = buscarSessaoId(idSessao);
@@ -1544,7 +1580,13 @@ public class SistemaDeCarona {
 
 		return usuario.getListaDeCaronasDoUsuario();
 	}
-
+    
+	/**
+	 * 
+	 * @param idSessao
+	 * @param idCarona
+	 * @return lista de solicitacoes confirmadas
+	 */
 	public List<String> getSolicitacoesConfirmadas(String idSessao,
 			String idCarona) {
 
@@ -1560,7 +1602,12 @@ public class SistemaDeCarona {
 
 		return resp;
 	}
-
+    
+	/**
+	 * 
+	 * @param idCarona
+	 * @return lista de solicitacoes pendentes de uma carona
+	 */
 	public List<String> getSolicitacoesPendentes(String idCarona) {
 		Carona carona = buscaCaronaID(idCarona);
 		List<String> solicitacoesPendentes = new ArrayList<String>();
@@ -1570,7 +1617,12 @@ public class SistemaDeCarona {
 		}
 		return solicitacoesPendentes;
 	}
-
+    /**
+     * 
+     * @param idSessao
+     * @param idCarona
+     * @return lista de pontos sugeridos de uma carona
+     */
 	public List<String> getPontosSugeridos(String idSessao, String idCarona) {
 		Carona carona = buscaCaronaID(idCarona);
 		Sessao sessao = buscarSessaoId(idSessao);
@@ -1621,6 +1673,9 @@ public class SistemaDeCarona {
 		Sessao sessao = buscarSessaoId(idSessao);
 		Carona carona = buscaCaronaID(idCarona);
 		Usuario caroneiro = buscaUsuario(loginCaroneiro);
+		
+		GregorianCalendar calendar = tempoMininoReview(idCarona);
+    	GregorianCalendar calendar2 = new GregorianCalendar();
 
 		boolean taNaCarona = false; // Verifica se o caroneiro ta na carona
 		for (Solicitacao solicitacao : carona.getListaDeSolicitacaoAceitas()) {
@@ -1638,7 +1693,9 @@ public class SistemaDeCarona {
 																				// o
 																				// dono
 																				// da
-																				// carona
+				if (calendar2.before(calendar)) {
+					throw new Exception("você ainda não pode da review");
+				}																// carona
 				if (review.equals("faltou")) { // Para poder da Review ou nao
 					caroneiro.addFaltasEmCaronas();
 					caroneiro.getListaDeCaronasQueParticipa().remove(carona);
@@ -1657,22 +1714,57 @@ public class SistemaDeCarona {
 
 	}
 	
-	public void reviewCarona(String idSessao, String idCarona, String review) throws Exception{
+	public GregorianCalendar tempoMininoReview(String idCarona) throws ParseException{
 		
-	 	Carona carona = buscaCaronaID(idCarona);
-    	Usuario donoDaCarona = carona.getDonoDaCarona();
-    	GregorianCalendar calendar = new GregorianCalendar();
+		final int TEMPO_MININO_CARONA_MUNICIPAL = 1;
+		final int TEMPO_MINIMO_CARONA_INTERMUNICIPAL = 2;
+		
+		Carona carona = buscaCaronaID(idCarona);
+		
+		GregorianCalendar calendar = new GregorianCalendar();
     	GregorianCalendar calendar2 = new GregorianCalendar();
+    	
     	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		Date date = new Date();
 		date = sdf.parse(carona.getData());
 		calendar.setTime(date);
 		calendar.add(calendar.HOUR, Integer.parseInt((carona.getHora().split(":"))[0]));
 		calendar.add(calendar.MINUTE, Integer.parseInt((carona.getHora().split(":"))[1]));
-		calendar2.setTime(calendar.getTime());
+
+		if (carona.tipoDeCarona().equals("Municipal")) {		
+			calendar.add(calendar.HOUR, TEMPO_MININO_CARONA_MUNICIPAL);
+		}else{
+			calendar.add(calendar.HOUR, TEMPO_MINIMO_CARONA_INTERMUNICIPAL);
+		}
+		
+		return calendar;
+		
+	}
+	
+	/**
+	 * metodo para o caroneiro relatar como foi a carona
+	 * @param idSessao
+	 * @param idCarona
+	 * @param review
+	 * @throws Exception
+	 */
+	public void reviewCarona(String idSessao, String idCarona, String review) throws Exception{
+		
+		
+	 	Carona carona = buscaCaronaID(idCarona);
+    	Usuario donoDaCarona = carona.getDonoDaCarona();
+    	
+        GregorianCalendar calendar = tempoMininoReview(idCarona);
+    	GregorianCalendar calendar2 = new GregorianCalendar();
+    	
+  
+
     	
     	for (Solicitacao solicitacao : carona.getListaDeSolicitacaoAceitas()) {
 			if (solicitacao.getIdSessao().equals(idSessao)) { // se o usuario estava naquela carona
+			  if (calendar2.after(calendar)) {
+				
+			
 			   if(review.equals("segura e tranquila")){
 				  donoDaCarona.addCaronasSeguras();	   
 			      addCaronaNoHistorico(donoDaCarona.getLogin(), idCarona);
@@ -1684,25 +1776,46 @@ public class SistemaDeCarona {
 			    	throw new Exception("Opção inválida.");
 			    }
 			   break;
+			}else{
+				throw new Exception("você ainda não pode da review");
 			}
-			throw new Exception("Usuário não possui vaga na carona.");
-						
+			}else{
+				throw new Exception("Usuário não possui vaga na carona.");
+			}
 		}
 	}
 	
 	
-	//retorna idInteresse
+	/**
+	 * meotodo para um usuario cadastrar interesse em uma carona
+	 * @param idSessao
+	 * @param origem
+	 * @param destino
+	 * @param data
+	 * @param horaInicial
+	 * @param horaFim
+	 * @return id do interesse criado
+	 * @throws Exception
+	 */
 	public String cadastrarInteresse(String idSessao, String origem, String destino, String data, String horaInicial, String horaFim) throws Exception
 	{
 		excecaoCadastrarInteresse(idSessao, origem, destino, data);
 		Interesse interesse = new Interesse(idSessao, origem, destino, data, horaInicial, horaFim);
 		listaDeInteresses.add(interesse);
 		
-		thredSalvaInteresses = new ThreadForSave<Interesse>("Interesses", listaDeInteresses);
-		thredSalvaInteresses.start();
+		threadSalvaInteresses = new ThreadForSave<Interesse>("Interesses", listaDeInteresses);
+		threadSalvaInteresses.start();
 		return interesse.getIdInteresse();
 	}
 	
+	/**
+	 * metodo que lanca excecoes ao cadastrar interesse
+	 * @param idSessao
+	 * @param origem
+	 * @param destino
+	 * @param data
+	 * @throws Exception
+	 */
 	public void excecaoCadastrarInteresse(String idSessao, String origem, String destino,
 			String data) throws Exception {
 		//excecao se as horas forem null???
@@ -1738,33 +1851,26 @@ public class SistemaDeCarona {
 	}
 	
 	
-
+    /**
+     * zera o sistema incluindo os arquivos,todos os dados são apagados
+     */
 	public void zerarSistema() {
+		
+     
 		listaDeCaronas.clear();
 		listaDeSessoesAbertas.clear();
 		listaDeUsuarios.clear();
 		listaDeCaronasInterMunicipais.clear();
 		listaDeCaronasMunicipais.clear();
 		listaDeInteresses.clear();
-	 //   encerrarSistema();
+		listaDeInteresses.clear();
+	    //encerrarSistema();
 
 	}
 
 	public static void main(String[] args) throws Exception {
 		
 		SistemaDeCarona s = getInstanceOf();
-		s.criarUsuario("Hudson", "123", "Hudson Daniel", "edesio silva", "hudson@gmail.com");
-		s.criarUsuario("Danilo", "123", "danilo gomes", "edesio silva", "dnlgomes9341fdfsf@gmail.com");
-		String idSessao = s.abrirSessao("Hudson", "123");
-		String idSessao2 = s.abrirSessao("Danilo", "123");
-		System.out.println("aqui");
-		String idCarona  = s.cadastrarCarona(idSessao, "campina", "caruaru", "12/07/2012", "14:00", "3");
-	    String idSolicitacao = s.solicitarVaga(idSessao2, idCarona);
-	    s.aceitarSolicitacao(idSessao, idSolicitacao);
-	    
-
-		
-
         
 		
 		/*s.criarUsuario("Hudson", "123", "Hudson Daniel", "edesio silva", "hudson@gmail.com");

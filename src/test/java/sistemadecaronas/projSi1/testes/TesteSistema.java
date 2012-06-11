@@ -1,8 +1,9 @@
-package sistemasdecaronas.projSi1.testes;
+package sistemadecaronas.projSi1.testes;
 
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -334,7 +335,7 @@ public class TesteSistema {
 		// Encontro
 		String idSolicitacao = sistema.solicitarVaga(sessaoBill, idCarona4);
 		assertEquals("Campina Grande",
-				sistema.getAtributoSolicitacao(idSolicitacao, "origem"));
+				sistema.buscaCaronaID(sistema.buscaSolicitacao(idSolicitacao).getIdCarona()).getOrigem());
 		assertEquals("Joao Pessoa",
 				sistema.getAtributoSolicitacao(idSolicitacao, "destino"));
 		assertEquals("Mark Zuckerberg",
@@ -349,8 +350,11 @@ public class TesteSistema {
 		
 		solicitacao.setPonto("Acude");
 		
+		assertEquals("Acude", solicitacao.getPonto());
+		
 		assertEquals(null, sistema.getAtributoSolicitacao(idSolicitacao,
 				"Acude"));
+		
 
 	}
 
@@ -437,6 +441,8 @@ public class TesteSistema {
 	@Test
 	public void TestaReviewCarona() throws Exception{
 		
+		GregorianCalendar calendar = new GregorianCalendar();
+		
 		Carona carona = sistema.buscaCaronaID(idCarona4);
 		
 		Usuario caroneiro = sistema.buscaUsuario("bill");
@@ -467,19 +473,25 @@ public class TesteSistema {
 		assertEquals(0, donoDaCarona.getHistoricoCaronas().size());
 		assertEquals(0, donoDaCarona.getHistoricoVagasEmCaronas().size());
 		
+		// so pode da review depois de um tempo minimo após a hora marcada para a carona
+        calendar.add(calendar.HOUR, -2);
+        String data = calendar.DATE+"/"+calendar.MONTH+"/"+calendar.YEAR;
+        carona.setData(data);
 		sistema.reviewCarona(sessaoBill, idCarona4, "segura e tranquila");
+
 		
 		assertEquals(0, donoDaCarona.getCaronasNaoFuncionaram());
 		assertEquals(1, donoDaCarona.getCaronasSeguras());
 		assertEquals(1, donoDaCarona.getHistoricoCaronas().size());
 		assertEquals(0, donoDaCarona.getHistoricoVagasEmCaronas().size());
 		
-		sistema.reviewVagaEmCarona(sessaoMark, idCarona4, "bill", "não faltou");
-		
+	    sistema.reviewVagaEmCarona(sessaoMark, idCarona4, "bill", "não faltou");
+	   
 		assertEquals(0, caroneiro.getFaltasEmCaronas());
 		assertEquals(0, caroneiro.getHistoricoCaronas().size());
 		assertEquals(1, caroneiro.getHistoricoVagasEmCaronas().size());
 		assertEquals(1, caroneiro.getPresencaEmCaronas());
+		
 		
 		sistema.reviewVagaEmCarona(sessaoMark, idCarona4, "steve", "faltou");
 		
@@ -742,6 +754,27 @@ public class TesteSistema {
 		assertEquals(0, sistema.localizarCarona(sistema.listaDeCaronasInterMunicipais, sessaoMark, "bodocongo", "centro").size());
 		assertEquals(1, sistema.localizarCarona(sistema.listaDeCaronasMunicipais, sessaoMark, "bodocongo", "centro").size());
 		assertEquals(1, sistema.localizarCaronaMunicipal(sessaoMark, "bodocongo", "centro", "campina grande").size());
+	}
+	
+	@Test
+	
+	public void testaReview() throws Exception{
+		
+		String idSolicitacao = sistema.solicitarVaga(sessaoBill, idCarona4);
+		sistema.aceitarSolicitacao(sessaoMark, idSolicitacao);
+		
+		// tenta da review quando a carona não ocorreu 
+		try {
+			sistema.reviewCarona(sessaoBill, idCarona4, "segura e tranquila");
+		} catch (Exception e) {
+			assertEquals("você ainda não pode da review", e.getMessage());
+		}
+		
+		try {
+			sistema.reviewVagaEmCarona(sessaoMark, idCarona4, "bill", "faltou");
+		} catch (Exception e) {
+			assertEquals("você ainda não pode da review", e.getMessage());
+		}
 	}
 	
 

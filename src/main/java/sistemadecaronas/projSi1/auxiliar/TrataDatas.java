@@ -7,34 +7,6 @@ import java.util.regex.Pattern;
 
 public class TrataDatas {
 	
-	private GregorianCalendar dataAtual, dataHoraCarona;
-	
-	public boolean dataHorarioValido(String data, String hora)
-	{
-		dataAtual = new GregorianCalendar();
-		return dataAtual.before(dataGregorianCalendar(data, hora));
-	}
-	
-	/**
-	 * 
-	 * @param data data da carona : dd/mm/aaaa
-	 * @param hora horario da carona: hh:mm
-	 * @return gregorian calendar do horario da carona
-	 */
-	public GregorianCalendar dataGregorianCalendar(String data, String hora)
-	{
-		
-		String[] dataDividida = data.split("/");
-		String[] horaDividida = hora.split(":");
-		int dia = Integer.parseInt(dataDividida[0]);
-		int mes = Integer.parseInt(dataDividida[1]);
-		int ano = Integer.parseInt(dataDividida[2]);
-		int horas = Integer.parseInt(horaDividida[0]);
-		int minutos = Integer.parseInt(horaDividida[1]);
-		dataHoraCarona = new GregorianCalendar(ano, mes, dia, horas, minutos);
-		return dataHoraCarona;
-	}
-	
 public static boolean isDataValida(String dataRecebida) {
 		
 		boolean dataBoolean = true;
