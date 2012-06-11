@@ -1732,6 +1732,31 @@ public class SistemaDeCarona {
 		
 	}
 	
+	public boolean reviewValido(Carona carona,List<Review> listaReview){
+		
+		double numeroReviewBom  = 0 ;
+		double numeroReviewRuim = 0 ; 
+		boolean reviewValido = false;
+
+		for (Review review : listaReview) {
+			
+			if (review.getTIPO_REVIEW().equals("BOM")) {
+				numeroReviewBom++;
+			}else{
+				numeroReviewRuim++;
+			}
+		}
+		
+		if (numeroReviewBom/numeroReviewRuim >= 0.65 || numeroReviewRuim/numeroReviewBom >= 0.65) {
+			
+			reviewValido = true;
+		}
+		
+		
+		
+		return reviewValido;
+	}
+	
 	/**
 	 * metodo para o caroneiro relatar como foi a carona
 	 * @param idSessao
@@ -1741,9 +1766,13 @@ public class SistemaDeCarona {
 	 */
 	public void reviewCarona(String idSessao, String idCarona, String review) throws Exception{
 		
+		final String TIPO_REVIEW_BOM = "BOM";
+		final String TIPO_REVIEW_RUIM = "RUIM";
+		
 		
 	 	Carona carona = buscaCaronaID(idCarona);
     	Usuario donoDaCarona = carona.getDonoDaCarona();
+    	Usuario caroneiro = buscaUsuario(buscarSessaoId(idSessao).getLogin());
     	
         GregorianCalendar calendar = tempoMininoReview(idCarona);
     	GregorianCalendar calendar2 = new GregorianCalendar();
@@ -1753,16 +1782,20 @@ public class SistemaDeCarona {
     	
     	for (Solicitacao solicitacao : carona.getListaDeSolicitacaoAceitas()) {
 			if (solicitacao.getIdSessao().equals(idSessao)) { // se o usuario estava naquela carona
-			  if (calendar2.after(calendar)) {
+			  if (calendar2.after(calendar)) { //se ja pode da review
 				
 			
 			   if(review.equals("segura e tranquila")){
+				  Review  rv = new Review(caroneiro, TIPO_REVIEW_BOM);
+				  carona.addReview(rv);
 				  donoDaCarona.addCaronasSeguras();	   
 			      addCaronaNoHistorico(donoDaCarona.getLogin(), idCarona);
 			   }
-			    else if(review.equals("não funcionou"))	
+			    else if(review.equals("não funcionou")){
+			    	Review  rv = new Review(caroneiro, TIPO_REVIEW_RUIM);
+				    carona.addReview(rv);
 			    	donoDaCarona.addCaronasNaoFuncionaram();
-			        
+			    }
 			    else{
 			    	throw new Exception("Opção inválida.");
 			    }

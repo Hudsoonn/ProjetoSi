@@ -1,8 +1,12 @@
 package sistemadecaronas.projSi1.sistema;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+
+import javax.print.attribute.HashAttributeSet;
 
 public class CaronaMunicipal implements Carona{
 
@@ -15,7 +19,7 @@ public class CaronaMunicipal implements Carona{
 	private String origem, destino, data, hora, idDaCarona, cidade;
 	private int vagas;
 	public List<PontoDeEncontro> pontoDeEncontro = new ArrayList<PontoDeEncontro>();
-	
+	public List<Review>  listaDeReview = new ArrayList<Review>();
 	
 	
 	public CaronaMunicipal(String origem, String destino, String cidade, String data, String hora, int vagas){
@@ -178,6 +182,19 @@ public class CaronaMunicipal implements Carona{
 		
 		return listaDeParticipantes;
 	}
+	
+	public void addReview(Review review){
+		
+		listaDeReview.add(review);
+		
+	}
+
+	public List<Review> getListaDeReview() {
+
+		return listaDeReview;
+	}
+	
+
 
 	
 	

@@ -3,7 +3,9 @@ package sistemadecaronas.projSi1.sistema;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -29,6 +31,7 @@ public class CaronaIntermunicipal implements Carona{
 	private String origem, destino, data, hora, idDaCarona;
 	private int vagas;
 	public List<PontoDeEncontro> pontoDeEncontro = new ArrayList<PontoDeEncontro>();
+	public List<Review>  listaDeReview = new ArrayList<Review>();
 	
 	
 	
@@ -183,6 +186,19 @@ public class CaronaIntermunicipal implements Carona{
 	public List<Usuario> getListaDeParticipantes() {
 		return listaDeParticipantes;
 	}
+	
+	
+	public void addReview(Review review){
+		
+		listaDeReview.add(review);
+		
+	}
+
+	public List<Review> getListaDeReview() {
+
+		return listaDeReview;
+	}
+	
 
 
 

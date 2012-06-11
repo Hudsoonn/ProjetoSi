@@ -1,6 +1,7 @@
 package sistemadecaronas.projSi1.sistema;
 
 import java.util.List;
+import java.util.Map;
 
 public interface Carona {
 	
@@ -77,6 +78,12 @@ public interface Carona {
     public void removeParticipante(Usuario usuario);
 	    		
 	public List<Usuario> getListaDeParticipantes();
+	
+	public List<Review> getListaDeReview();
+
+	public void addReview(Review review);
+	
+
 	
 	
 }
