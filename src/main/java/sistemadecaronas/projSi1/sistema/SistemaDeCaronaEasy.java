@@ -20,7 +20,6 @@ public class SistemaDeCaronaEasy {
 	 * @param args
 	 */
 	public List<Usuario> listaDeUsuarios = new ArrayList<Usuario>();
-//	public List<Perfil> listaDePerfis = new ArrayList<Perfil>();
 	public List<Carona> listaDeCaronas = new ArrayList<Carona>();
 	public List<CaronaIntermunicipal> listaDeCaronasInterMunicipais = new ArrayList<CaronaIntermunicipal>();
 	public List<CaronaMunicipal> listaDeCaronasMunicipais = new ArrayList<CaronaMunicipal>();
@@ -31,8 +30,6 @@ public class SistemaDeCaronaEasy {
 	public SistemaDeCaronaEasy() {
 	}
 
-	// criarUsuario login="mark" senha="m@rk" nome="Mark Zuckerberg"
-	// endereco="Palo Alto, California" email="mark@facebook.com"
 
 	public void criarUsuario(String login, String senha, String nome,
 			String endereco, String email) throws Exception {
@@ -41,10 +38,6 @@ public class SistemaDeCaronaEasy {
 
 		Usuario novoUsuario = new Usuario(login, senha, nome, endereco, email);
 		listaDeUsuarios.add(novoUsuario);
-//		Perfil perfil = new Perfil(nome, endereco, email, login);// criar perfil
-																	// do
-																	// usuario
-	//	listaDePerfis.add(perfil);
 
 	}
 
@@ -59,7 +52,6 @@ public class SistemaDeCaronaEasy {
 		System.out.println("Sistema Encerrado");
 	}
 
-	// # o método 'abrirSessao' retorna o ID da sessão
 	public String abrirSessao(String login, String senha) throws Exception {
 
 		boolean sessaoAberta = false;
@@ -185,7 +177,6 @@ public class SistemaDeCaronaEasy {
 			saida = String.valueOf(carona.tipoDeCarona().equals("Municipal"));
 		}
 
-		// aceita o primeiro que achar e depois sai.
 		return saida;
 	}
 
@@ -224,11 +215,11 @@ public class SistemaDeCaronaEasy {
 		if (destino == null || destino.equals("")) {
 			throw new Exception("Destino inválido");
 		}
-		// !auxiliar.TrataDatas.isDataValida(data)
+
 		if (data == null || data.equals("") || !TrataDatas.isDataValida(data)) {
 			throw new Exception("Data inválida");
 		}
-		// !auxiliar.TrataDatas.horaValida(hora)
+
 		if (hora == null || hora.equals("") || !TrataDatas.horaValida(hora)) {
 			throw new Exception("Hora inválida");
 		}
@@ -374,7 +365,6 @@ public class SistemaDeCaronaEasy {
 
 	private void verificaInteresse(String idDaSessao, String origem,
 			String destino, String data, String hora) throws Exception {
-		//Sessao sessao = buscarSessaoId(idDaSessao);
 		Carona carona = new CaronaIntermunicipal(origem, destino, data, hora, 0);
 		for(Interesse interesse : listaDeInteresses)
 		{
@@ -455,11 +445,6 @@ public class SistemaDeCaronaEasy {
 
 
 	public void enviaMensagem(Mensagem mensagem) throws Exception {
-		//expect "[Carona cadastrada no dia 23/06/2012, Ã s 16:00 de acordo com os seus interesses registrados. Entrar em contato com jucaPeroba@gmail.com]" verificarMensagensPerfil idSessao=${sessaoZezito}
-		/*Sessao sessao = buscarSessaoId(idSessao);
-		Usuario usuario = buscaUsuario(sessao.getLogin());
-		String mensagem = "Carona cadastrada no dia " + data + ", Às " + hora + " de acordo com os seus interesses registrados." +
-							" Entrar em contato com " + usuario.getEmail();*/
 		
 		Usuario destinatario = buscaUsuario(mensagem.getDestinatario());
 		destinatario.addMensagem(mensagem);
@@ -477,64 +462,7 @@ public class SistemaDeCaronaEasy {
 	}
 	
 
-	
-	/*
-	 * public String localizarCarona(String idDaSessao, String origem,String
-	 * destino) throws Exception {
-	 * 
-	 * excecaoLocalizarCarona(idDaSessao, origem, destino); List<String>
-	 * caronasEncontradas = new ArrayList<String>(); String strCaronas = null;
-	 * 
-	 * for (String chave : mapaDeCaronas.keySet()) {
-	 * 
-	 * for (Carona carona : mapaDeCaronas.get(chave)) {
-	 * 
-	 * 
-	 * if (!origem.equals("") && !destino.equals("")) { // lista todas as
-	 * caronas de uma determinada origem até um destino
-	 * 
-	 * 
-	 * if (carona.getDestino().equals(destino) &&
-	 * carona.getOrigem().equals(origem)) {
-	 * 
-	 * caronasEncontradas.add(carona.getIdDaCarona());
-	 * 
-	 * } }
-	 * 
-	 * if (!origem.equals("") && destino.equals("")) { //lista todas as caronas
-	 * daquela origem if (carona.getOrigem().equals(origem)) {
-	 * 
-	 * caronasEncontradas.add(carona.getIdDaCarona());
-	 * 
-	 * } }
-	 * 
-	 * if (origem.equals("") && !destino.equals("")) { // lista todas as caronas
-	 * para aquele destino if (carona.getDestino().equals(destino)) {
-	 * 
-	 * caronasEncontradas.add(carona.getIdDaCarona());
-	 * 
-	 * } }
-	 * 
-	 * if (origem.equals("") && destino.equals("")) { // lista todas as caronas
-	 * 
-	 * caronasEncontradas.add(carona.getIdDaCarona());
-	 * 
-	 * }
-	 * 
-	 * }
-	 * 
-	 * 
-	 * }
-	 * 
-	 * 
-	 * 
-	 * 
-	 * strCaronas = caronasEncontradas.toString(); strCaronas =
-	 * strCaronas.replace("[", "{"); strCaronas = strCaronas.replace("]", "}");
-	 * strCaronas = strCaronas.replace(" ", "");
-	 * 
-	 * return strCaronas; }
-	 */
+
 
 	public String localizarCarona(String idSessao, String origem, String destino)
 			throws Exception {
@@ -786,7 +714,6 @@ public class SistemaDeCaronaEasy {
 	public String getCarona(String idDaCarona) throws Exception {
 		excecaoGetCarona(idDaCarona);
 		Carona carona = buscaCaronaID(idDaCarona);
-		// João Pessoa para Campina Grande, no dia 25/11/2026, as 06:59
 		return carona.getOrigem() + " para " + carona.getDestino()
 				+ ", no dia " + carona.getData() + ", as " + carona.getHora();
 
@@ -821,8 +748,7 @@ public class SistemaDeCaronaEasy {
 		excecaoDesistirSolicitacao(desistirSolicitacao);
 		Carona carona = buscaCaronaID(idCarona);
 		Sugestao sugestao = new Sugestao(pontos, idSessao);
-		carona.addSugestao(sugestao); // adiciona a sugestao na lista de
-										// sugestoes da carona
+		carona.addSugestao(sugestao); 
 
 		return sugestao.getIdSugestao();
 	}
@@ -1030,10 +956,7 @@ public class SistemaDeCaronaEasy {
 		Solicitacao solicitacao = buscaSolicitacao(idSolicitacao);
 		Sessao sessaoDeQuemSolicitou = buscarSessaoId(solicitacao.getIdSessao());
 	    Usuario usuarioQueSolicitou = buscaUsuario(sessaoDeQuemSolicitou.getLogin());
-		// Quem aceita nao era para ser o Dono da carona?!?!?!?!?!?!?!?
 
-		
-		// Sessao sessao = buscarSessaoId(idSessao);
 		Carona carona = buscaCaronaID(solicitacao.getIdCarona());
 		carona.addSolicitacaoAceita(solicitacao);
 		carona.removeSolicitacao(solicitacao);
@@ -1073,12 +996,11 @@ public class SistemaDeCaronaEasy {
 			if (sugestao != null) {
 				carona.removeSugestao(sugestao);
 			}
-			// remover as coisas
+
 			carona.removePontoDeEncontro(new PontoDeEncontro(buscaUsuario(sessao.getLogin()), sugestao.getPontos()));
-			// sugestao.mapaDeResposta.remove(sugestao);
+
 			carona.removeSugestao(sugestao);
-			// carona.listaDeSolicitacao.remove(o);
-			// carona.removeSolicitacao(sugestao.);
+
 		}
 
 	}
@@ -1146,21 +1068,6 @@ public class SistemaDeCaronaEasy {
 
 	}
 
-/*	public Perfil buscaPerfil(String login) {
-		Perfil retorno = null;
-		Iterator<Perfil> itListaDePerfis = listaDePerfis.iterator();
-
-		while (itListaDePerfis.hasNext()) {
-			Perfil perfil = itListaDePerfis.next();
-			if (perfil.getLogin().equals(login)) {
-				retorno = perfil;
-				break;
-
-			}
-		}
-
-		return retorno;
-	}*/
 
 	public void reiniciarSistema() throws Exception {
 
@@ -1242,9 +1149,7 @@ public class SistemaDeCaronaEasy {
 		return resposta;
 	}
 
-	// OBS: esse metodo poe ser implementado usando o mapaDeCaronas existente só
-	// que é bom mudar o mapaDeCaronas pra <String,String> para isso tem que
-	// alterar alguns metodos,vou fazer isso depois.
+
 	public String getTodasCaronasUsuario(String idSessao) {
 
 		List<String> todasAsCaronas = new ArrayList<String>();
@@ -1396,7 +1301,7 @@ public class SistemaDeCaronaEasy {
 	
 	public void excecaoCadastrarInteresse(String idSessao, String origem, String destino,
 			String data) throws Exception {
-		//excecao se as horas forem null???
+
 		if (origem == null) {
 			throw new Exception("Origem inválida");
 		}
@@ -1441,27 +1346,9 @@ public class SistemaDeCaronaEasy {
 
 	}
 
-	// enviarEmail idSessao=${sessaoMark} destino="bill@gmail.com"
-	// message="A solicitaÃ§Ã£o foi recebida"
-	// public boolean enviarEmail(String idSessao, String destino, String
-	// message)
-	// {
-	//
-	// }
+
 
 	public static void main(String[] args) throws Exception {
-		
-		SistemaDeCaronaEasy s = new SistemaDeCaronaEasy();
-		s.criarUsuario("Hudson", "123", "Hudson Daniel", "edesio silva", "hudson@gmail.com");
-		String idSessaoHudson = s.abrirSessao("Hudson", "123");
-		
-		String idCarona = s.cadastrarCarona(idSessaoHudson, "campina", "Caruaru", "20/03/2013", "15:00", "0");
-		
-		String idSolicitacao = s.solicitarVaga(idSessaoHudson, idCarona);
-		
-		s.aceitarSolicitacao(idSessaoHudson, idSolicitacao);
-		
-		System.out.println(s.buscaCaronaID(idCarona).getVagas());
 		
 		
 		
