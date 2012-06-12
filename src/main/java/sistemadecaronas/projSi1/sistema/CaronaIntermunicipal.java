@@ -31,7 +31,8 @@ public class CaronaIntermunicipal implements Carona{
 	private String origem, destino, data, hora, idDaCarona;
 	private int vagas;
 	public List<PontoDeEncontro> pontoDeEncontro = new ArrayList<PontoDeEncontro>();
-	public List<Review>  listaDeReview = new ArrayList<Review>();
+	public List<Review> listaDeReview = new ArrayList<Review>();
+	public List<Review> listaDeReviewVagaCarona = new ArrayList<Review>();
 	
 	
 	
@@ -197,6 +198,17 @@ public class CaronaIntermunicipal implements Carona{
 	public List<Review> getListaDeReview() {
 
 		return listaDeReview;
+	}
+	
+public void addReviewVagaCarona(Review review){
+		
+		listaDeReviewVagaCarona.add(review);
+		
+	}
+
+	public List<Review> getListaDeReviewVagaCarona() {
+
+		return listaDeReviewVagaCarona;
 	}
 	
 

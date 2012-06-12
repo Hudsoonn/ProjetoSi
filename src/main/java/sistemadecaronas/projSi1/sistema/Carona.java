@@ -83,6 +83,10 @@ public interface Carona {
 
 	public void addReview(Review review);
 	
+	public List<Review> getListaDeReviewVagaCarona();
+
+	public void addReviewVagaCarona(Review review);
+	
 
 	
 	

@@ -55,7 +55,7 @@ public class TesteSistema {
 		sessaoBill = sistema.abrirSessao("bill", "severino");
 
 		idCarona4 = sistema.cadastrarCarona(sessaoMark, "Campina Grande",
-				"Joao Pessoa", "12/06/2012", "14:00", "3");
+				"Joao Pessoa", "20/08/2012", "14:00", "3");
 
 		idCarona5 = sistema.cadastrarCarona(sessaoMark, "Lagoa Seca", "Recife",
 				"12/07/2013", "23:00", "2");
@@ -143,13 +143,13 @@ public class TesteSistema {
 		}
 		try {
 			sistema.cadastrarCarona(sessaoMark, "Campina Grande",
-					"Joao Pessoa", "12/06/2012", "32:00", "3");
+					"Joao Pessoa", "12/07/2012", "32:00", "3");
 		} catch (Exception e) {
 			assertEquals("Hora inválida", e.getMessage());
 		}
 		try {
 			sistema.cadastrarCarona(sessaoMark, "Campina Grande",
-					"Joao Pessoa", "12/06/2012", "14:00", "");
+					"Joao Pessoa", "20/07/2012", "14:00", "");
 		} catch (Exception e) {
 			assertEquals("Vaga inválida", e.getMessage());
 		}
@@ -222,7 +222,7 @@ public class TesteSistema {
 	@Test
 	public void testaGetCarona() throws Exception {
 		assertEquals(
-				"Campina Grande para Joao Pessoa, no dia 12/06/2012, as 14:00",
+				"Campina Grande para Joao Pessoa, no dia 20/08/2012, as 14:00",
 				sistema.getInformacoesCarona(idCarona4));
 		try {
 			sistema.getInformacoesCarona(null);
@@ -474,11 +474,20 @@ public class TesteSistema {
 		assertEquals(0, donoDaCarona.getHistoricoVagasEmCaronas().size());
 		
 		// so pode da review depois de um tempo minimo após a hora marcada para a carona
-        calendar.add(calendar.HOUR, -2);
-        String data = calendar.DATE+"/"+calendar.MONTH+"/"+calendar.YEAR;
+        calendar.add(calendar.HOUR_OF_DAY, -4);
+        String hora = calendar.get(calendar.HOUR_OF_DAY)+":"+calendar.get(calendar.MINUTE);
+        String data = calendar.get(calendar.DATE)+"/"+(calendar.get(calendar.MONTH)+1)+"/"+calendar.get(calendar.YEAR);
         carona.setData(data);
+        carona.setHora(hora);
 		sistema.reviewCarona(sessaoBill, idCarona4, "segura e tranquila");
-
+		
+		// so adiciona o review se ele for seguro,se 65% dos caroneiros da carona derem o mesmo review
+		assertEquals(0, donoDaCarona.getCaronasNaoFuncionaram());
+		assertEquals(0, donoDaCarona.getCaronasSeguras());
+		assertEquals(0, donoDaCarona.getHistoricoCaronas().size());
+		assertEquals(0, donoDaCarona.getHistoricoVagasEmCaronas().size());
+		
+		sistema.reviewCarona(sessaoSteve, idCarona4, "segura e tranquila");
 		
 		assertEquals(0, donoDaCarona.getCaronasNaoFuncionaram());
 		assertEquals(1, donoDaCarona.getCaronasSeguras());
@@ -628,16 +637,16 @@ public class TesteSistema {
 	  sistema.aceitarSolicitacao(sessaoMark, idSolicitacao);
 	  
 	  Usuario usuario = sistema.buscaUsuario("bill");
-	  assertEquals(false,sistema.participaDeCaronaNoHorario(sessaoBill, "12/06/2012", "11:59",usuario.getListaDeCaronasQueParticipa()));
+	  assertEquals(false,sistema.participaDeCaronaNoHorario(sessaoBill, "20/08/2012", "11:59",usuario.getListaDeCaronasQueParticipa()));
 	  
-	  assertEquals(true,sistema.participaDeCaronaNoHorario(sessaoBill, "12/06/2012", "12:00",usuario.getListaDeCaronasQueParticipa()));
-	  assertEquals(true,sistema.participaDeCaronaNoHorario(sessaoBill, "12/06/2012", "13:00",usuario.getListaDeCaronasQueParticipa()));
+	  assertEquals(true,sistema.participaDeCaronaNoHorario(sessaoBill, "20/08/2012", "12:00",usuario.getListaDeCaronasQueParticipa()));
+	  assertEquals(true,sistema.participaDeCaronaNoHorario(sessaoBill, "20/08/2012", "13:00",usuario.getListaDeCaronasQueParticipa()));
 	  
-	  assertEquals(true,sistema.participaDeCaronaNoHorario(sessaoBill, "12/06/2012", "14:00",usuario.getListaDeCaronasQueParticipa()));
-	  assertEquals(true,sistema.participaDeCaronaNoHorario(sessaoBill, "12/06/2012", "15:00",usuario.getListaDeCaronasQueParticipa()));
-	  assertEquals(true,sistema.participaDeCaronaNoHorario(sessaoBill, "12/06/2012", "16:00",usuario.getListaDeCaronasQueParticipa()));
+	  assertEquals(true,sistema.participaDeCaronaNoHorario(sessaoBill, "20/08/2012", "14:00",usuario.getListaDeCaronasQueParticipa()));
+	  assertEquals(true,sistema.participaDeCaronaNoHorario(sessaoBill, "20/08/2012", "15:00",usuario.getListaDeCaronasQueParticipa()));
+	  assertEquals(true,sistema.participaDeCaronaNoHorario(sessaoBill, "20/08/2012", "16:00",usuario.getListaDeCaronasQueParticipa()));
 	  
-	  assertEquals(false,sistema.participaDeCaronaNoHorario(sessaoBill, "12/06/2012", "16:01",usuario.getListaDeCaronasQueParticipa()));
+	  assertEquals(false,sistema.participaDeCaronaNoHorario(sessaoBill, "20/08/2012", "16:01",usuario.getListaDeCaronasQueParticipa()));
 		
 	}
 	
@@ -646,16 +655,16 @@ public class TesteSistema {
 		
 	  Usuario usuario = sistema.buscaUsuario("mark");
 	  
-      assertEquals(false,sistema.temCaronaNoHorario(sessaoMark, "12/06/2012", "11:59",usuario.getListaDeCaronasDoUsuario()));
+      assertEquals(false,sistema.temCaronaNoHorario(sessaoMark, "20/08/2012", "11:59",usuario.getListaDeCaronasDoUsuario()));
 	  
-	  assertEquals(true,sistema.temCaronaNoHorario(sessaoMark, "12/06/2012", "12:00",usuario.getListaDeCaronasDoUsuario()));
-	  assertEquals(true,sistema.temCaronaNoHorario(sessaoMark, "12/06/2012", "13:00",usuario.getListaDeCaronasDoUsuario()));
+	  assertEquals(true,sistema.temCaronaNoHorario(sessaoMark, "20/08/2012", "12:00",usuario.getListaDeCaronasDoUsuario()));
+	  assertEquals(true,sistema.temCaronaNoHorario(sessaoMark, "20/08/2012", "13:00",usuario.getListaDeCaronasDoUsuario()));
 	  
-	  assertEquals(true,sistema.temCaronaNoHorario(sessaoMark, "12/06/2012", "14:00",usuario.getListaDeCaronasDoUsuario()));
-	  assertEquals(true,sistema.temCaronaNoHorario(sessaoMark, "12/06/2012", "15:00",usuario.getListaDeCaronasDoUsuario()));
-	  assertEquals(true,sistema.temCaronaNoHorario(sessaoMark, "12/06/2012", "16:00",usuario.getListaDeCaronasDoUsuario()));
+	  assertEquals(true,sistema.temCaronaNoHorario(sessaoMark, "20/08/2012", "14:00",usuario.getListaDeCaronasDoUsuario()));
+	  assertEquals(true,sistema.temCaronaNoHorario(sessaoMark, "20/08/2012", "15:00",usuario.getListaDeCaronasDoUsuario()));
+	  assertEquals(true,sistema.temCaronaNoHorario(sessaoMark, "20/08/2012", "16:00",usuario.getListaDeCaronasDoUsuario()));
 	  
-	  assertEquals(false,sistema.temCaronaNoHorario(sessaoMark, "12/06/2012", "16:01",usuario.getListaDeCaronasDoUsuario()));
+	  assertEquals(false,sistema.temCaronaNoHorario(sessaoMark, "20/08/2012", "16:01",usuario.getListaDeCaronasDoUsuario()));
 	  
 	  
 	}
@@ -665,31 +674,31 @@ public class TesteSistema {
 	public void testaCadastrarCaronaHorarioExistente() throws Exception{
 		
 		try {
-			sistema.cadastrarCarona(sessaoMark, "campina", "joão pessoa","12/06/2012", "14:00", "3");
+			sistema.cadastrarCarona(sessaoMark, "campina", "joão pessoa","20/08/2012", "14:00", "3");
 		} catch (Exception e) {
 			 assertEquals("você já tem uma carona em um horario proximo", e.getMessage());
 		}
 		
 		try {
-			sistema.cadastrarCarona(sessaoMark, "campina", "joão pessoa","12/06/2012", "12:00", "3");
+			sistema.cadastrarCarona(sessaoMark, "campina", "joão pessoa","20/08/2012", "12:00", "3");
 		} catch (Exception e) {
 			 assertEquals("você já tem uma carona em um horario proximo", e.getMessage());
 		}
 		
 		try {
-			sistema.cadastrarCarona(sessaoMark, "campina", "joão pessoa","12/06/2012", "15:00", "3");
+			sistema.cadastrarCarona(sessaoMark, "campina", "joão pessoa","20/08/2012", "15:00", "3");
 		} catch (Exception e) {
 			 assertEquals("você já tem uma carona em um horario proximo", e.getMessage());
 		}
 		
 		try {
-			sistema.cadastrarCarona(sessaoMark, "campina", "joão pessoa","12/06/2012", "16:00", "3");
+			sistema.cadastrarCarona(sessaoMark, "campina", "joão pessoa","20/08/2012", "16:00", "3");
 		} catch (Exception e) {
 			 assertEquals("você já tem uma carona em um horario proximo", e.getMessage());
 		}
 		
        assertEquals(2, sistema.buscaUsuario("mark").getListaDeCaronasDoUsuario().size());
-	   sistema.cadastrarCarona(sessaoMark, "campina", "joão pessoa","12/06/2012", "16:01", "3");
+	   sistema.cadastrarCarona(sessaoMark, "campina", "joão pessoa","20/08/2012", "16:01", "3");
 	   assertEquals(3, sistema.buscaUsuario("mark").getListaDeCaronasDoUsuario().size());
 
 
@@ -761,8 +770,16 @@ public class TesteSistema {
 	public void testaReview() throws Exception{
 		
 		String idSolicitacao = sistema.solicitarVaga(sessaoBill, idCarona4);
+		Carona carona = sistema.buscaCaronaID(sistema.buscaSolicitacao(idSolicitacao).getIdCarona());
+
 		sistema.aceitarSolicitacao(sessaoMark, idSolicitacao);
 		
+		String idSolicitacao2 = sistema.solicitarVaga(sessaoSteve, idCarona4);
+		sistema.aceitarSolicitacao(sessaoMark, idSolicitacao2);
+		
+
+		
+		GregorianCalendar calendar = new GregorianCalendar();
 		// tenta da review quando a carona não ocorreu 
 		try {
 			sistema.reviewCarona(sessaoBill, idCarona4, "segura e tranquila");
@@ -775,6 +792,45 @@ public class TesteSistema {
 		} catch (Exception e) {
 			assertEquals("você ainda não pode da review", e.getMessage());
 		}
+		
+		calendar.add(calendar.HOUR_OF_DAY, -4);
+        String hora = calendar.get(calendar.HOUR_OF_DAY)+":"+calendar.get(calendar.MINUTE);
+        String data = calendar.get(calendar.DATE)+"/"+(calendar.get(calendar.MONTH)+1)+"/"+calendar.get(calendar.YEAR);
+        carona.setData(data);
+        carona.setHora(hora);
+        
+        sistema.reviewCarona(sessaoBill, idCarona4, "segura e tranquila");
+        sistema.reviewCarona(sessaoSteve, idCarona4, "não funcionou");
+        
+        // review não seguro
+        assertEquals(0, carona.getDonoDaCarona().getCaronasSeguras());
+        assertEquals(0, carona.getDonoDaCarona().getCaronasNaoFuncionaram());
+        
+        carona.getListaDeReview().clear();
+        
+        sistema.reviewCarona(sessaoBill, idCarona4, "segura e tranquila");
+        sistema.reviewCarona(sessaoSteve, idCarona4, "segura e tranquila");
+        
+        // review seguro
+        assertEquals(1, carona.getDonoDaCarona().getCaronasSeguras());
+        assertEquals(0, carona.getDonoDaCarona().getCaronasNaoFuncionaram());
+        
+        
+        try {
+        	sistema.reviewCarona(sessaoBill, idCarona4, "segura e tranquila");
+		} catch (Exception e) {
+			assertEquals("você ja deu review", e.getMessage());
+		}
+        
+        sistema.reviewVagaEmCarona(sessaoMark, idCarona4, "bill", "faltou");
+        
+        try {
+        	sistema.reviewVagaEmCarona(sessaoMark, idCarona4, "bill", "faltou");
+		} catch (Exception e) {
+			assertEquals("você ja deu review nesse caroneiro", e.getMessage());
+		}
+                
+        
 	}
 	
 
