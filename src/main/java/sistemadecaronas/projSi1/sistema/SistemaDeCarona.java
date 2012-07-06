@@ -17,6 +17,7 @@ import javax.mail.MessagingException;
 
 import sistemadecaronas.projSi1.auxiliar.TrataDatas;
 import sistemadecaronas.projSi1.auxiliar.TrataEmail;
+import sistemadecaronas.projSi1.persistencia.SalvaDados;
 import sistemadecaronas.projSi1.persistencia.Serializador;
 
 public class SistemaDeCarona {
@@ -28,6 +29,7 @@ public class SistemaDeCarona {
 	public List<Carona> listaDeCaronas = new ArrayList<Carona>();
 	public List<Carona> listaDeCaronasInterMunicipais = new ArrayList<Carona>();
 	public List<Carona> listaDeCaronasMunicipais = new ArrayList<Carona>();
+	public List<Carona> listaDeCaronasRelampago = new ArrayList<Carona>();
 	public List<Sessao> listaDeSessoesAbertas = new ArrayList<Sessao>();
 	public List<Interesse> listaDeInteresses = new ArrayList<Interesse>();
 	private static SistemaDeCarona sistemaDeCarona = null;
@@ -202,6 +204,10 @@ public class SistemaDeCarona {
 	 if (temCaronaNoHorario(idDaSessao, data, hora, usuario.getListaDeCaronasDoUsuario())) {
 		throw new Exception("você já tem uma carona em um horario proximo");
 	  }
+	 
+	 if (participaDeCaronaNoHorario(idDaSessao, data, hora, listaDeCaronas)) {
+		 throw new Exception("você já participa de uma carona em um horario proximo");
+	}
 
 
 	}
@@ -321,14 +327,12 @@ public class SistemaDeCarona {
 	 * @return id da carona
 	 * @throws Exception
 	 */
-	public String cadastrarCarona(String idDaSessao, String origem,
-			String destino, String data, String hora, String vagas)
-			throws Exception {
-		excecaoDeCriacaoDeCarona(idDaSessao, origem, destino, data, hora, vagas);
-		Sessao sessao = buscarSessaoId(idDaSessao);
-		int vagasInt = Integer.parseInt(vagas);
-		Carona novaCarona = new CaronaIntermunicipal(origem, destino, data,
-				hora, vagasInt);
+	public String cadastrarCarona(String idSessao, String origem,String destino, String data, String hora, String vagas)throws Exception {
+		excecaoDeCriacaoDeCarona(idSessao, origem, destino, data, hora, vagas);
+		
+		Sessao sessao = buscarSessaoId(idSessao);
+	
+		Carona novaCarona = new CaronaIntermunicipal(origem, destino, data,hora, Integer.parseInt(vagas));
 		novaCarona.setDonoDaCarona(buscaUsuario(sessao.getLogin()));
 		listaDeCaronas.add(novaCarona);//
 		listaDeCaronasInterMunicipais.add((CaronaIntermunicipal) novaCarona);
@@ -339,11 +343,80 @@ public class SistemaDeCarona {
 
 		salvaCaronas();
 		
-		//Verificar se existe interesse
-		verificaInteresse(idDaSessao, origem, destino, data, hora);
+			//Verificar se existe interesse
+			verificaInteresse(idSessao, origem, destino, data, hora);
 		
 		return novaCarona.getIdDaCarona();
 
+	}
+	
+	public String cadastrarCaronaRelampago(String idSessao, String origem, String destino, String data, String hora, String nMinimoCaroneiros) throws Exception{
+		       
+ 
+		Sessao sessao = buscarSessaoId(idSessao);
+		
+		Carona novaCarona = new CaronaRelampago(origem, destino, data,hora, Integer.parseInt(nMinimoCaroneiros));
+		novaCarona.setDonoDaCarona(buscaUsuario(sessao.getLogin()));
+		listaDeCaronas.add(novaCarona);//
+		listaDeCaronasRelampago.add((CaronaRelampago) novaCarona);
+
+		Usuario usuario = buscaUsuario(sessao.getLogin());
+		usuario.addCarona(novaCarona);
+		
+
+		salvaCaronas();
+		
+			//Verificar se existe interesse
+			verificaInteresse(idSessao, origem, destino, data, hora);
+		
+		return novaCarona.getIdDaCarona();
+
+	
+	}
+	
+	private void enviaEmailCaronaRelampago(Carona carona){
+		
+		for (Usuario usuario : carona.getListaDeParticipantes()) {		
+			enviaEmail(carona.getDonoDaCarona().getId(), usuario.getEmail(), "a carona não deu certo");
+			
+		}
+	}
+	
+	public void atualizaStatusCaronaRelampago(CaronaRelampago carona) throws Exception{
+		
+		final int TEMPO_MAXIMO_CARONA_RELAMPAGO = 48;
+		
+		if (passouNumeroDeHoras(carona.getData(), carona.getHora(), TEMPO_MAXIMO_CARONA_RELAMPAGO) && carona.getVagas() != 0) {
+			
+			carona.setCaronaExpired();
+			enviaEmailCaronaRelampago(carona);
+			cancelarCarona(carona.getDonoDaCarona().getId(), carona.getIdDaCarona());
+			
+		}
+		
+	}
+	
+	public boolean passouNumeroDeHoras(String dataCarona,String horaCarona, int nHorasParaAumentar) throws ParseException{
+		
+		boolean passouNumeroDeHoras = false;
+		
+		GregorianCalendar calendar = new GregorianCalendar();
+		GregorianCalendar calendarDepois = new GregorianCalendar();
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		Date date = new Date();
+		
+		date = sdf.parse(dataCarona);
+		calendarDepois.setTime(date);
+		calendarDepois.set(calendarDepois.HOUR_OF_DAY, Integer.parseInt(horaCarona.split(":")[0]));
+		calendarDepois.set(calendarDepois.MINUTE,  Integer.parseInt(horaCarona.split(":")[1]));
+		calendarDepois.add(calendarDepois.HOUR, nHorasParaAumentar);
+		
+		if (calendar.after(calendarDepois)) {
+			passouNumeroDeHoras = true;
+		}
+		
+		return passouNumeroDeHoras;
+		
 	}
 	/**
 	 * verifica se o usuario tem um carona num horario proximo
@@ -383,7 +456,7 @@ public class SistemaDeCarona {
 	}
 	
 	/**
-	 * verifica se o usuario esta oferencendo o incluso em alguma carona em um intervalo de tempo
+	 * verifica se o usuario esta oferencendo ou incluso em alguma carona em um intervalo de tempo
 	 * @param idSessao
 	 * @param data
 	 * @param hora
@@ -1206,11 +1279,11 @@ public class SistemaDeCarona {
 			carona.addParticipante(usuarioQueSolicitou);
 			
 
-			enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi aceita!.");
+		//	enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi aceita!.");
 
 			}else{		
 	
-	        	enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi rejeitada por falta de vagas.");
+	    //    	enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi rejeitada por falta de vagas.");
 				throw new Exception("solicitacao rejeitada por falta de vagas");		
 			}
 		}
@@ -1244,10 +1317,10 @@ public class SistemaDeCarona {
 				usuarioQueSolicitou.addCaronaQueParticipa(carona);
 				carona.addParticipante(usuarioQueSolicitou);
                	
-			    enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi aceita!.");
+			//    enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi aceita!.");
 			}else{
 	
-				enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi rejeitada por falta de vagas.");
+			//	enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi rejeitada por falta de vagas.");
 				throw new Exception("solicitacao rejeitada por falta de vagas");
 			}
 		}
@@ -1641,6 +1714,7 @@ public class SistemaDeCarona {
 					caroneiro.getListaDeCaronasQueParticipa().remove(carona);
 				} else if (review.equals("não faltou")) {
 					Review rv = new Review(caroneiro, "não faltou");
+	                caroneiro.addQuemDeuReviewPositivo(carona.getDonoDaCarona().getLogin());
 					carona.addReviewVagaCarona(rv);
 					caroneiro.addPresencaEmCaronas();
 					addhistoricoVagasEmCaronas(caroneiro.getLogin(), idCarona);
@@ -1830,6 +1904,7 @@ public class SistemaDeCarona {
 			   if(review.equals("segura e tranquila")){
 				  Review  rv = new Review(caroneiro, TIPO_REVIEW_BOM);
 				  carona.addReview(rv);
+				  donoDaCarona.addQuemDeuReviewPositivo(caroneiro.getLogin());
 				  if (reviewValido(carona)) {
 				    donoDaCarona.addCaronasSeguras();	   
 			        addCaronaNoHistorico(donoDaCarona.getLogin(), idCarona);
@@ -1850,7 +1925,7 @@ public class SistemaDeCarona {
 			}else throw new Exception("Usuário não possui vaga na carona.");
 		}
 	
-	
+		
 	
 	/**
 	 * meotodo para um usuario cadastrar interesse em uma carona
@@ -1934,6 +2009,33 @@ public class SistemaDeCarona {
 	}
 
 	public static void main(String[] args) throws Exception {
+		
+		SistemaDeCarona s = SistemaDeCarona.getInstanceOf();
+		
+		System.out.println(s.passouNumeroDeHoras("24/06/2012", "00:41", 48));
+		
+		s.criarUsuario("Hud", "123", "sfs", "ed", "a@g.com");
+		s.criarUsuario("Hud2", "123", "sfs", "ed", "ab@g.com");
+		String id = s.abrirSessao("Hud", "123");
+		String id2 = s.abrirSessao("Hud2", "123");
+		
+		String idCarona = s.cadastrarCaronaRelampago(id, "s", "d", "24/06/2012", "00:40", "2");
+		
+		String idSolicitacao = s.solicitarVaga(id2, idCarona);
+		s.aceitarSolicitacao(id, idSolicitacao);
+		
+		System.out.println(s.listaDeCaronas.size());
+		
+		s.atualizaStatusCaronaRelampago((CaronaRelampago) s.buscaCaronaID(idCarona));
+		
+		System.out.println(s.listaDeCaronas.size());
+		
+		
+		
+		
+
+	
+			
 		
 	}
 

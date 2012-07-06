@@ -5,6 +5,10 @@ import java.util.Map;
 
 public interface Carona {
 	
+	public boolean ehPreferencial();
+	
+	public void setCaronaPreferencial(boolean caronaPreferencial);
+	
 	public String tipoDeCarona();
 	
 	public List<Solicitacao> getListaDeSolicitacao();
@@ -16,7 +20,7 @@ public interface Carona {
 	public List<Solicitacao> getListaDeSolicitacaoAceitas();
 
 
-	public void setPontoDeEncontro(List<PontoDeEncontro> pontoDeEncontro) ;
+	public void setPontoDeEncontro(List<PontoDeEncontro> listaDePontoDeEncontro) ;
 
 	public String getIdDaCarona() ;
 

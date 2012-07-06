@@ -7,7 +7,7 @@
       <nome>Mark Zuckerberg</nome>
       <endereco>Palo Alto, California</endereco>
       <email>mark@facebook.com</email>
-      <id>312cbe7b-ada7-4631-858d-9e23ef9488bd</id>
+      <id>a35ad200-674b-406a-aab1-37b304862fb6</id>
       <listaDeCaronasQueParticipa/>
       <listaDeCaronasDoUsuario>
         <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal reference="../../.."/>
@@ -18,16 +18,36 @@
           <listaDeSugestoes/>
           <listaDeSolicitacao/>
           <listaDeParticipantes/>
-          <origem>Campina Grande</origem>
-          <destino>JoÃ£o Pessoa</destino>
-          <data>04/06/2020</data>
-          <hora>16:00</hora>
-          <idDaCarona>650b5448-6347-43c7-ad58-8a4bbfa0504b</idDaCarona>
+          <origem>Lagoa Seca</origem>
+          <destino>Recife</destino>
+          <data>12/07/2013</data>
+          <hora>23:00</hora>
+          <idCarona>14da7cac-4758-41da-add8-880cc2ae7928</idCarona>
+          <caronaPreferencial>false</caronaPreferencial>
           <vagas>2</vagas>
-          <pontoDeEncontro/>
+          <listaDePontoDeEncontro/>
           <listaDeReview/>
           <listaDeReviewVagaCarona/>
         </sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
+        <sistemadecaronas.projSi1.sistema.CaronaMunicipal>
+          <TIPO__CARONA>Municipal</TIPO__CARONA>
+          <donoDaCarona reference="../../.."/>
+          <listaDeSolicitacaoAceitas/>
+          <listaDeSugestoes/>
+          <listaDeParticipantes/>
+          <listaDeSolicitacao/>
+          <origem>bodocongo</origem>
+          <destino>centro</destino>
+          <data>15/07/2012</data>
+          <hora>14:00</hora>
+          <idCarona>cb4522cc-9591-4573-9bfd-65d1a9ab11d7</idCarona>
+          <cidade>campina grande</cidade>
+          <vagas>3</vagas>
+          <listaDePontoDeEncontro/>
+          <caronaPreferencial>false</caronaPreferencial>
+          <listaDeReview/>
+          <listaDeReviewVagaCarona/>
+        </sistemadecaronas.projSi1.sistema.CaronaMunicipal>
       </listaDeCaronasDoUsuario>
       <listaDeMensagens/>
       <presencaEmCaronas>0</presencaEmCaronas>
@@ -35,30 +55,24 @@
       <caronasNaoFuncionaram>0</caronasNaoFuncionaram>
       <caronasSeguras>0</caronasSeguras>
       <historicoVagasEmCaronas/>
-      <historicoCaronas>
-        <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal reference="../../.."/>
-        <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal reference="../../listaDeCaronasDoUsuario/sistemadecaronas.projSi1.sistema.CaronaIntermunicipal[2]"/>
-      </historicoCaronas>
+      <historicoCaronas/>
+      <listaReviewPositivos/>
     </donoDaCarona>
     <listaDeSolicitacaoAceitas/>
     <listaDeSugestoes/>
-    <listaDeSolicitacao>
-      <sistemadecaronas.projSi1.sistema.Solicitacao>
-        <idSessao></idSessao>
-        <idCarona>fecb2de9-2c69-4853-8dc9-98fb022dc651</idCarona>
-        <idSolicitacao>2c9ea093-09e6-41aa-b9b1-8cf158a778b7</idSolicitacao>
-      </sistemadecaronas.projSi1.sistema.Solicitacao>
-    </listaDeSolicitacao>
+    <listaDeSolicitacao/>
     <listaDeParticipantes/>
     <origem>Campina Grande</origem>
-    <destino>JoÃ£o Pessoa</destino>
-    <data>02/06/2020</data>
-    <hora>12:00</hora>
-    <idDaCarona>fecb2de9-2c69-4853-8dc9-98fb022dc651</idDaCarona>
-    <vagas>1</vagas>
-    <pontoDeEncontro/>
+    <destino>Joao Pessoa</destino>
+    <data>20/08/2012</data>
+    <hora>14:00</hora>
+    <idCarona>437fdce5-deeb-4b7d-a397-6e36fe83b9a7</idCarona>
+    <caronaPreferencial>false</caronaPreferencial>
+    <vagas>3</vagas>
+    <listaDePontoDeEncontro/>
     <listaDeReview/>
     <listaDeReviewVagaCarona/>
   </sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
   <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal reference="../sistemadecaronas.projSi1.sistema.CaronaIntermunicipal/donoDaCarona/listaDeCaronasDoUsuario/sistemadecaronas.projSi1.sistema.CaronaIntermunicipal[2]"/>
+  <sistemadecaronas.projSi1.sistema.CaronaMunicipal reference="../sistemadecaronas.projSi1.sistema.CaronaIntermunicipal/donoDaCarona/listaDeCaronasDoUsuario/sistemadecaronas.projSi1.sistema.CaronaMunicipal"/>
 </list>

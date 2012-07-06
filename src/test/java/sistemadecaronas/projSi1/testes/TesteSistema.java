@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.*;
 
 import sistemadecaronas.projSi1.sistema.Carona;
+import sistemadecaronas.projSi1.sistema.CaronaRelampago;
 import sistemadecaronas.projSi1.sistema.ConteudoTexto;
 import sistemadecaronas.projSi1.sistema.Interesse;
 import sistemadecaronas.projSi1.sistema.Mensagem;
@@ -522,25 +523,25 @@ public class TesteSistema {
 		
 		assertEquals(0, caroneiro.getListaDeMensagens().size());
 		
-		sistema.cadastrarCarona(sessaoMark, "Campina Grande", "João Pessoa", "15/06/2012", "15:00", "4");
+		sistema.cadastrarCarona(sessaoMark, "Campina Grande", "João Pessoa", "15/06/2020", "15:00", "4");
 		
 		assertEquals(1, caroneiro.getListaDeMensagens().size());
 		
 		sistema.cadastrarInteresse(sessaoBill, "Campina Grande", "", "", "", "");
 		
-		sistema.cadastrarCarona(sessaoMark, "Campina Grande", "João Pessoa", "17/06/2012", "15:00", "3");
+		sistema.cadastrarCarona(sessaoMark, "Campina Grande", "João Pessoa", "17/06/2020", "15:00", "3");
 		
 		assertEquals(3, caroneiro.getListaDeMensagens().size());
 		
 		sistema.cadastrarInteresse(sessaoBill, "", "", "", "15:00", "");
 		
-		sistema.cadastrarCarona(sessaoMark, "Campina Grande", "João Pessoa", "19/06/2012", "15:00", "3");
+		sistema.cadastrarCarona(sessaoMark, "Campina Grande", "João Pessoa", "19/06/2020", "15:00", "3");
 		
 		assertEquals(6, caroneiro.getListaDeMensagens().size());
 		
 		sistema.cadastrarInteresse(sessaoBill, "", "", "", "16:00", ""); // fora do horario
 		
-		sistema.cadastrarCarona(sessaoMark, "Campina Grande", "João Pessoa", "20/06/2012", "15:00", "3");
+		sistema.cadastrarCarona(sessaoMark, "Campina Grande", "João Pessoa", "20/06/2020", "15:00", "3");
 
 		assertEquals(9, caroneiro.getListaDeMensagens().size());
 	
@@ -734,7 +735,7 @@ public class TesteSistema {
 		String idSolicitacao = sistema.solicitarVaga(sessaoBill, idCarona4);
 		sistema.aceitarSolicitacao(sessaoMark, idSolicitacao);
 		
-		String idCarona = sistema.cadastrarCarona(sessaoSteve, "Campina", "Caruaru", "12/06/2012", "15:00", "2");
+		String idCarona = sistema.cadastrarCarona(sessaoSteve, "Campina", "Caruaru", "12/06/2020", "15:00", "2");
 		try {
 			sistema.solicitarVaga(sessaoBill, idCarona);
 		} catch (Exception e) {
@@ -831,6 +832,100 @@ public class TesteSistema {
 		}
                 
         
+	}
+	
+	@Test
+	public void testaCadastrarCaronaHoraExistente() throws Exception{
+		
+		try {
+			sistema.cadastrarCarona(sessaoMark, "campina", "joao pessoa", "20/08/2012", "14:00", "3");
+		} catch (Exception e) {
+			assertEquals("você já tem uma carona em um horario proximo", e.getMessage());
+		}
+		 
+       
+
+	}
+	
+	@Test	
+	public void testaCaronaRelampago() throws Exception{
+		
+		
+		assertEquals(2, sistema.buscaUsuario("mark").getListaDeCaronasDoUsuario().size());
+		
+		String idCarona = sistema.cadastrarCaronaRelampago(sessaoMark, "campina", "natal", "20/10/2013", "14:00", "2");
+
+		
+		String idSolicitacao = sistema.solicitarVaga(sessaoBill,idCarona);
+		sistema.aceitarSolicitacao(sessaoMark, idSolicitacao);
+		
+		Usuario caroneiro = sistema.buscaUsuario("bill");
+		
+		assertEquals(1, sistema.buscaUsuario("bill").getListaDeCaronasQueParticipa().size());
+		assertEquals(3, sistema.buscaUsuario("mark").getListaDeCaronasDoUsuario().size());
+		
+		GregorianCalendar calendar  =  new GregorianCalendar();
+		calendar.set(calendar.DAY_OF_YEAR, calendar.get(calendar.DAY_OF_YEAR)-2);
+		calendar.set(calendar.HOUR_OF_DAY, calendar.get(calendar.HOUR_OF_DAY)-1);
+		int diaPassado = calendar.get(calendar.DAY_OF_MONTH);
+		int ano = calendar.get(calendar.YEAR);
+		int mes = calendar.get(calendar.MONTH)+1;
+		
+		String dataPassada = ""+0+diaPassado+"/"+0+mes+"/"+ano;
+		
+	//	String horaPassada = calendar.get(calendar.HOUR_OF_DAY)+":"+(calendar.get(calendar.MINUTE)-1);
+		System.out.println(dataPassada);
+		
+		Carona carona = sistema.buscaCaronaID(idCarona);
+		
+		carona.setData(dataPassada);
+		
+     //	carona.setHora(horaPassada);
+		
+     	assertEquals(3, sistema.listaDeCaronas.size());
+		sistema.atualizaStatusCaronaRelampago((CaronaRelampago) carona);
+		
+		assertEquals(2, sistema.listaDeCaronas.size());
+		assertEquals(0, caroneiro.getListaDeCaronasQueParticipa().size());
+		
+			
+	}
+	
+	@Test
+    public void testaReviewPositivos() throws Exception{
+		
+		GregorianCalendar calendar = new GregorianCalendar();
+		
+		
+	    String idSolicitacao = sistema.solicitarVaga(sessaoBill, idCarona4);
+	    sistema.aceitarSolicitacao(sessaoMark, idSolicitacao);
+	    
+	    Usuario caroneiro = sistema.buscaUsuario("bill");
+	    Usuario donoDaCarona = sistema.buscaUsuario("mark");
+	    Carona carona = sistema.buscaCaronaID(idCarona4);
+	    try {
+	    	
+	    	sistema.reviewCarona(sessaoBill, idCarona4, "segura e tranquila");
+			
+		} catch (Exception e) {
+			assertEquals("você ainda não pode da review",e.getMessage());
+			assertEquals(0,donoDaCarona.getListaReviewPositivos().size());
+		    
+		}
+	    calendar.set(calendar.HOUR_OF_DAY, calendar.get(calendar.HOUR_OF_DAY)-3);
+	    String dataAtual = calendar.get(calendar.DAY_OF_MONTH)+"/"+(calendar.get(calendar.MONTH)+1)+"/"+calendar.get(calendar.YEAR);
+      
+	    carona.setData(dataAtual);
+	    
+	    sistema.reviewCarona(sessaoBill, idCarona4, "segura e tranquila");
+	    
+	    assertEquals(1, donoDaCarona.getListaReviewPositivos().size());
+	    
+	    sistema.reviewVagaEmCarona(sessaoMark, idCarona4, "bill", "faltou");
+	    
+	    assertEquals(0, caroneiro.getListaReviewPositivos().size());
+	  	
+			
 	}
 	
 

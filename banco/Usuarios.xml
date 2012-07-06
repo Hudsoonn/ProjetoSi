@@ -5,67 +5,6 @@
     <nome>Mark Zuckerberg</nome>
     <endereco>Palo Alto, California</endereco>
     <email>mark@facebook.com</email>
-    <id>312cbe7b-ada7-4631-858d-9e23ef9488bd</id>
-    <listaDeCaronasQueParticipa/>
-    <listaDeCaronasDoUsuario>
-      <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
-        <TIPO__CARONA>InterMunicipal</TIPO__CARONA>
-        <donoDaCarona reference="../../.."/>
-        <listaDeSolicitacaoAceitas/>
-        <listaDeSugestoes/>
-        <listaDeSolicitacao>
-          <sistemadecaronas.projSi1.sistema.Solicitacao>
-            <idSessao></idSessao>
-            <idCarona>fecb2de9-2c69-4853-8dc9-98fb022dc651</idCarona>
-            <idSolicitacao>2c9ea093-09e6-41aa-b9b1-8cf158a778b7</idSolicitacao>
-          </sistemadecaronas.projSi1.sistema.Solicitacao>
-        </listaDeSolicitacao>
-        <listaDeParticipantes/>
-        <origem>Campina Grande</origem>
-        <destino>JoÃ£o Pessoa</destino>
-        <data>02/06/2020</data>
-        <hora>12:00</hora>
-        <idDaCarona>fecb2de9-2c69-4853-8dc9-98fb022dc651</idDaCarona>
-        <vagas>1</vagas>
-        <pontoDeEncontro/>
-        <listaDeReview/>
-        <listaDeReviewVagaCarona/>
-      </sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
-      <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
-        <TIPO__CARONA>InterMunicipal</TIPO__CARONA>
-        <donoDaCarona reference="../../.."/>
-        <listaDeSolicitacaoAceitas/>
-        <listaDeSugestoes/>
-        <listaDeSolicitacao/>
-        <listaDeParticipantes/>
-        <origem>Campina Grande</origem>
-        <destino>JoÃ£o Pessoa</destino>
-        <data>04/06/2020</data>
-        <hora>16:00</hora>
-        <idDaCarona>650b5448-6347-43c7-ad58-8a4bbfa0504b</idDaCarona>
-        <vagas>2</vagas>
-        <pontoDeEncontro/>
-        <listaDeReview/>
-        <listaDeReviewVagaCarona/>
-      </sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
-    </listaDeCaronasDoUsuario>
-    <listaDeMensagens/>
-    <presencaEmCaronas>0</presencaEmCaronas>
-    <faltasEmCaronas>0</faltasEmCaronas>
-    <caronasNaoFuncionaram>0</caronasNaoFuncionaram>
-    <caronasSeguras>0</caronasSeguras>
-    <historicoVagasEmCaronas/>
-    <historicoCaronas>
-      <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal reference="../../listaDeCaronasDoUsuario/sistemadecaronas.projSi1.sistema.CaronaIntermunicipal"/>
-      <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal reference="../../listaDeCaronasDoUsuario/sistemadecaronas.projSi1.sistema.CaronaIntermunicipal[2]"/>
-    </historicoCaronas>
-  </sistemadecaronas.projSi1.sistema.Usuario>
-  <sistemadecaronas.projSi1.sistema.Usuario>
-    <login>bill</login>
-    <senha>bilz@a</senha>
-    <nome>Bill Clinton</nome>
-    <endereco>Hollywood, California</endereco>
-    <email>bill@gmail.com</email>
     <listaDeCaronasQueParticipa/>
     <listaDeCaronasDoUsuario/>
     <listaDeMensagens/>
@@ -75,5 +14,40 @@
     <caronasSeguras>0</caronasSeguras>
     <historicoVagasEmCaronas/>
     <historicoCaronas/>
+    <listaReviewPositivos/>
+  </sistemadecaronas.projSi1.sistema.Usuario>
+  <sistemadecaronas.projSi1.sistema.Usuario>
+    <login>steve</login>
+    <senha>5t3v3</senha>
+    <nome>Steven Paul Jobs</nome>
+    <endereco>Palo Alto, California</endereco>
+    <email>jobs@apple.com</email>
+    <listaDeCaronasQueParticipa/>
+    <listaDeCaronasDoUsuario/>
+    <listaDeMensagens/>
+    <presencaEmCaronas>0</presencaEmCaronas>
+    <faltasEmCaronas>0</faltasEmCaronas>
+    <caronasNaoFuncionaram>0</caronasNaoFuncionaram>
+    <caronasSeguras>0</caronasSeguras>
+    <historicoVagasEmCaronas/>
+    <historicoCaronas/>
+    <listaReviewPositivos/>
+  </sistemadecaronas.projSi1.sistema.Usuario>
+  <sistemadecaronas.projSi1.sistema.Usuario>
+    <login>bill</login>
+    <senha>severino</senha>
+    <nome>William Henry Gates III</nome>
+    <endereco>Medina, Washington</endereco>
+    <email>bil@apple.com</email>
+    <listaDeCaronasQueParticipa/>
+    <listaDeCaronasDoUsuario/>
+    <listaDeMensagens/>
+    <presencaEmCaronas>0</presencaEmCaronas>
+    <faltasEmCaronas>0</faltasEmCaronas>
+    <caronasNaoFuncionaram>0</caronasNaoFuncionaram>
+    <caronasSeguras>0</caronasSeguras>
+    <historicoVagasEmCaronas/>
+    <historicoCaronas/>
+    <listaReviewPositivos/>
   </sistemadecaronas.projSi1.sistema.Usuario>
 </list>

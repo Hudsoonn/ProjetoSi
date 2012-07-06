@@ -12,15 +12,16 @@ public class CaronaMunicipal implements Carona{
 
 	private final String TIPO_CARONA = "Municipal";
 	private Usuario donoDaCarona;
-	public  List<Solicitacao> listaDeSolicitacaoAceitas = new ArrayList<Solicitacao>();
-	public List<Sugestao> listaDeSugestoes = new ArrayList<Sugestao>();
-	public List<Usuario> listaDeParticipantes = new ArrayList<Usuario>();
-	public  List<Solicitacao> listaDeSolicitacao = new ArrayList<Solicitacao>();
-	private String origem, destino, data, hora, idDaCarona, cidade;
+	private  List<Solicitacao> listaDeSolicitacaoAceitas = new ArrayList<Solicitacao>();
+	private List<Sugestao> listaDeSugestoes = new ArrayList<Sugestao>();
+	private List<Usuario> listaDeParticipantes = new ArrayList<Usuario>();
+	private  List<Solicitacao> listaDeSolicitacao = new ArrayList<Solicitacao>();
+	private String origem, destino, data, hora, idCarona, cidade;
 	private int vagas;
-	public List<PontoDeEncontro> pontoDeEncontro = new ArrayList<PontoDeEncontro>();
-	public List<Review>  listaDeReview = new ArrayList<Review>();
-	public List<Review>  listaDeReviewVagaCarona = new ArrayList<Review>();
+	private List<PontoDeEncontro> listaDePontoDeEncontro = new ArrayList<PontoDeEncontro>();
+	private boolean caronaPreferencial = false;
+	private List<Review>  listaDeReview = new ArrayList<Review>();
+	private List<Review>  listaDeReviewVagaCarona = new ArrayList<Review>();
 	
 	
 	public CaronaMunicipal(String origem, String destino, String cidade, String data, String hora, int vagas){
@@ -30,7 +31,7 @@ public class CaronaMunicipal implements Carona{
 		   this.cidade = cidade;
 		   this.hora = hora;
 		   this.vagas = vagas;
-		   idDaCarona = UUID.randomUUID().toString();	
+		   idCarona = UUID.randomUUID().toString();	
 	}
 	
 	public String getCidade() {
@@ -47,7 +48,7 @@ public class CaronaMunicipal implements Carona{
 
 
 	public List<PontoDeEncontro> getPontoDeEncontro() {
-		return pontoDeEncontro;
+		return listaDePontoDeEncontro;
 	}
 
 
@@ -56,13 +57,13 @@ public class CaronaMunicipal implements Carona{
 	}
 
 
-	public void setPontoDeEncontro(List<PontoDeEncontro> pontoDeEncontro) {
-		this.pontoDeEncontro = pontoDeEncontro;
+	public void setPontoDeEncontro(List<PontoDeEncontro> listaDePontoDeEncontro) {
+		this.listaDePontoDeEncontro = listaDePontoDeEncontro;
 	}
 
 
 	public String getIdDaCarona() {
-		return idDaCarona;
+		return idCarona;
 	}
 
 
@@ -76,8 +77,8 @@ public class CaronaMunicipal implements Carona{
 	}
 
 
-	public void setIdDaCarona(String idDaCarona) {
-		this.idDaCarona = idDaCarona;
+	public void setIdDaCarona(String idCarona) {
+		this.idCarona = idCarona;
 	}
 
 	
@@ -134,7 +135,7 @@ public class CaronaMunicipal implements Carona{
 	}
 
 	public void addPontoDeEncontro(PontoDeEncontro pontos) {
-		this.pontoDeEncontro.add(pontos);
+		this.listaDePontoDeEncontro.add(pontos);
 		
 	}
 
@@ -157,9 +158,9 @@ public class CaronaMunicipal implements Carona{
 	
 	public void removePontoDeEncontro(PontoDeEncontro ponto)
 	{
-		for (PontoDeEncontro pontoEncontro : pontoDeEncontro) {
+		for (PontoDeEncontro pontoEncontro : listaDePontoDeEncontro) {
 			if (pontoEncontro.getUsuario().getLogin().equals(ponto.getUsuario().getLogin() ) && pontoEncontro.getPonto().equals(ponto.getPonto())) {
-				pontoDeEncontro.remove(ponto);	
+				listaDePontoDeEncontro.remove(ponto);	
 				break;
 			}
 		}
@@ -204,6 +205,17 @@ public void addReviewVagaCarona(Review review){
 	public List<Review> getListaDeReviewVagaCarona() {
 
 		return listaDeReviewVagaCarona;
+	}
+
+	public boolean ehPreferencial() {
+
+		return caronaPreferencial;
+	}
+
+	public void setCaronaPreferencial(boolean caronaPreferencial) {
+		
+		this.caronaPreferencial = caronaPreferencial;
+		
 	}
 	
 

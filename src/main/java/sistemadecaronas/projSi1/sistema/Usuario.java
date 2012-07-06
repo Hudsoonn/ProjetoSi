@@ -23,6 +23,7 @@ public class Usuario {
 	private int caronasSeguras;
 	private ArrayList<Carona> historicoVagasEmCaronas;
 	private ArrayList<Carona> historicoCaronas;
+	private ArrayList<String> listaReviewPositivos;
 
 	public Usuario(String login, String senha, String nome, String endereco,
 			String email) throws Exception {
@@ -34,7 +35,7 @@ public class Usuario {
 		listaDeCaronasQueParticipa = new ArrayList<Carona>();
 		listaDeCaronasDoUsuario = new ArrayList<Carona>();
 		listaDeMensagens = new ArrayList<Mensagem>();
-		
+		listaReviewPositivos = new ArrayList<String>();
 		
 		this.historicoCaronas = new ArrayList<Carona>();
 		this.historicoVagasEmCaronas = new ArrayList<Carona>();
@@ -192,6 +193,17 @@ public class Usuario {
 	public void removeMensagem(Mensagem mensagem){
 		listaDeMensagens.remove(mensagem);
 	}
+    
+	public void addQuemDeuReviewPositivo(String login){
+		
+		listaReviewPositivos.add(login);
+	}
+	public ArrayList<String> getListaReviewPositivos() {
+		return listaReviewPositivos;
+	}
+
+	
+	
 
 	
 
