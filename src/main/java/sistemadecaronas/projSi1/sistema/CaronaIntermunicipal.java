@@ -31,6 +31,7 @@ public class CaronaIntermunicipal implements Carona{
 	private List<Usuario> listaDeParticipantes = new ArrayList<Usuario>();
 	private String origem, destino, data, hora, idCarona;
     private boolean caronaPreferencial = false;
+    private List<Usuario> listaDeUsuariosPreferenciais = new ArrayList<Usuario>();
 	private int vagas;
 	private List<PontoDeEncontro> listaDePontoDeEncontro = new ArrayList<PontoDeEncontro>();
 	private List<Review> listaDeReview = new ArrayList<Review>();
@@ -225,11 +226,31 @@ public class CaronaIntermunicipal implements Carona{
 	public void setCaronaPreferencial(boolean caronaPreferencial) {
 		
 	  this.caronaPreferencial = caronaPreferencial;
+	  
+	  for (Usuario usuario : this.donoDaCarona.getListaReviewPositivos()) {
+			
+			this.listaDeUsuariosPreferenciais.add(usuario);
+		}
 	
-	} 
+	}
+
+
+	public List<Usuario> getListaDeUsuariosPreferencias() {
+
+		return listaDeUsuariosPreferenciais;
+	}
+
+	public void addUsuarioPreferencial(Usuario usuario) {
+        
+		listaDeUsuariosPreferenciais.add(usuario);
+		
+	}
+
+	public void removeUsuarioPreferencial(Usuario usuario) {
+		
+		listaDeUsuariosPreferenciais.remove(usuario);
+		
+	}
 	
-
-
-
 
 }

@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.sun.mail.imap.protocol.UID;
-import com.sun.mail.imap.protocol.UIDSet;
-
 
 public class CaronaRelampago implements Carona{
 	
@@ -19,6 +16,7 @@ public class CaronaRelampago implements Carona{
 	private List<Solicitacao> listaDeSolicitacao = new ArrayList<Solicitacao>();
 	private List<Usuario> listaDeParticipantes = new ArrayList<Usuario>();
 	private boolean caronaPreferencial = false;
+	private List<Usuario> listaDeUsuariosPreferenciais = new ArrayList<Usuario>();
 	private List<PontoDeEncontro> listaDePontoDeEncontro = new ArrayList<PontoDeEncontro>();
 	private List<Review> listaDeReview = new ArrayList<Review>();
 	private List<Review> listaDeReviewVagaCarona = new ArrayList<Review>();
@@ -245,6 +243,28 @@ public class CaronaRelampago implements Carona{
 	public void setCaronaPreferencial(boolean caronaPreferencial) {
 		
 		this.caronaPreferencial = caronaPreferencial;
+		
+        for (Usuario usuario : this.donoDaCarona.getListaReviewPositivos()) {
+			
+			this.listaDeUsuariosPreferenciais.add(usuario);
+		}
+		
+	}
+
+	public List<Usuario> getListaDeUsuariosPreferencias() {
+
+		return listaDeUsuariosPreferenciais;
+	}
+
+	public void addUsuarioPreferencial(Usuario usuario) {
+        
+		listaDeUsuariosPreferenciais.add(usuario);
+		
+	}
+
+	public void removeUsuarioPreferencial(Usuario usuario) {
+		
+		listaDeUsuariosPreferenciais.remove(usuario);
 		
 	}
 	

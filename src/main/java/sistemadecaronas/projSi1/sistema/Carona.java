@@ -5,6 +5,12 @@ import java.util.Map;
 
 public interface Carona {
 	
+	public List<Usuario> getListaDeUsuariosPreferencias();
+	
+	public void addUsuarioPreferencial(Usuario usuario);
+	
+	public void removeUsuarioPreferencial(Usuario usuario);
+	
 	public boolean ehPreferencial();
 	
 	public void setCaronaPreferencial(boolean caronaPreferencial);

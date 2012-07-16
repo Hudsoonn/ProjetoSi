@@ -20,6 +20,7 @@ public class CaronaMunicipal implements Carona{
 	private int vagas;
 	private List<PontoDeEncontro> listaDePontoDeEncontro = new ArrayList<PontoDeEncontro>();
 	private boolean caronaPreferencial = false;
+	private List<Usuario> listaDeUsuariosPreferenciais = new ArrayList<Usuario>();
 	private List<Review>  listaDeReview = new ArrayList<Review>();
 	private List<Review>  listaDeReviewVagaCarona = new ArrayList<Review>();
 	
@@ -208,13 +209,35 @@ public void addReviewVagaCarona(Review review){
 	}
 
 	public boolean ehPreferencial() {
-
+		
 		return caronaPreferencial;
 	}
 
 	public void setCaronaPreferencial(boolean caronaPreferencial) {
 		
 		this.caronaPreferencial = caronaPreferencial;
+		
+		for (Usuario usuario : this.donoDaCarona.getListaReviewPositivos()) {
+			
+			this.listaDeUsuariosPreferenciais.add(usuario);
+		}
+		
+	}
+
+	public List<Usuario> getListaDeUsuariosPreferencias() {
+
+		return listaDeUsuariosPreferenciais;
+	}
+
+	public void addUsuarioPreferencial(Usuario usuario) {
+        
+		listaDeUsuariosPreferenciais.add(usuario);
+		
+	}
+
+	public void removeUsuarioPreferencial(Usuario usuario) {
+		
+		listaDeUsuariosPreferenciais.remove(usuario);
 		
 	}
 	

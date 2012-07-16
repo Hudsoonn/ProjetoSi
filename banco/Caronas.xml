@@ -7,7 +7,7 @@
       <nome>Mark Zuckerberg</nome>
       <endereco>Palo Alto, California</endereco>
       <email>mark@facebook.com</email>
-      <id>a35ad200-674b-406a-aab1-37b304862fb6</id>
+      <id>655c9274-3091-4dda-b54a-c3621bf36e3b</id>
       <listaDeCaronasQueParticipa/>
       <listaDeCaronasDoUsuario>
         <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal reference="../../.."/>
@@ -22,32 +22,14 @@
           <destino>Recife</destino>
           <data>12/07/2013</data>
           <hora>23:00</hora>
-          <idCarona>14da7cac-4758-41da-add8-880cc2ae7928</idCarona>
+          <idCarona>6479da3c-60da-4f04-a790-00864210f7e0</idCarona>
           <caronaPreferencial>false</caronaPreferencial>
+          <listaDeUsuariosPreferenciais/>
           <vagas>2</vagas>
           <listaDePontoDeEncontro/>
           <listaDeReview/>
           <listaDeReviewVagaCarona/>
         </sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
-        <sistemadecaronas.projSi1.sistema.CaronaMunicipal>
-          <TIPO__CARONA>Municipal</TIPO__CARONA>
-          <donoDaCarona reference="../../.."/>
-          <listaDeSolicitacaoAceitas/>
-          <listaDeSugestoes/>
-          <listaDeParticipantes/>
-          <listaDeSolicitacao/>
-          <origem>bodocongo</origem>
-          <destino>centro</destino>
-          <data>15/07/2012</data>
-          <hora>14:00</hora>
-          <idCarona>cb4522cc-9591-4573-9bfd-65d1a9ab11d7</idCarona>
-          <cidade>campina grande</cidade>
-          <vagas>3</vagas>
-          <listaDePontoDeEncontro/>
-          <caronaPreferencial>false</caronaPreferencial>
-          <listaDeReview/>
-          <listaDeReviewVagaCarona/>
-        </sistemadecaronas.projSi1.sistema.CaronaMunicipal>
       </listaDeCaronasDoUsuario>
       <listaDeMensagens/>
       <presencaEmCaronas>0</presencaEmCaronas>
@@ -66,13 +48,13 @@
     <destino>Joao Pessoa</destino>
     <data>20/08/2012</data>
     <hora>14:00</hora>
-    <idCarona>437fdce5-deeb-4b7d-a397-6e36fe83b9a7</idCarona>
+    <idCarona>371b5b1a-7042-492c-b326-8dc9e666e5e8</idCarona>
     <caronaPreferencial>false</caronaPreferencial>
+    <listaDeUsuariosPreferenciais/>
     <vagas>3</vagas>
     <listaDePontoDeEncontro/>
     <listaDeReview/>
     <listaDeReviewVagaCarona/>
   </sistemadecaronas.projSi1.sistema.CaronaIntermunicipal>
   <sistemadecaronas.projSi1.sistema.CaronaIntermunicipal reference="../sistemadecaronas.projSi1.sistema.CaronaIntermunicipal/donoDaCarona/listaDeCaronasDoUsuario/sistemadecaronas.projSi1.sistema.CaronaIntermunicipal[2]"/>
-  <sistemadecaronas.projSi1.sistema.CaronaMunicipal reference="../sistemadecaronas.projSi1.sistema.CaronaIntermunicipal/donoDaCarona/listaDeCaronasDoUsuario/sistemadecaronas.projSi1.sistema.CaronaMunicipal"/>
 </list>
