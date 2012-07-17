@@ -853,6 +853,7 @@ public class TesteSistema {
 		
 		assertEquals(2, sistema.buscaUsuario("mark").getListaDeCaronasDoUsuario().size());
 		
+		// cadastra com 2 vagas e so uma eh preenchida
 		String idCarona = sistema.cadastrarCaronaRelampago(sessaoMark, "campina", "natal", "20/10/2013", "14:00", "2");
 
 		
@@ -873,19 +874,37 @@ public class TesteSistema {
 		
 		String dataPassada = ""+diaPassado+"/"+0+mes+"/"+ano;
 		
-	//	String horaPassada = calendar.get(calendar.HOUR_OF_DAY)+":"+(calendar.get(calendar.MINUTE)-1);
+	
 		
 		Carona carona = sistema.buscaCaronaID(idCarona);
 		
 		carona.setData(dataPassada);
-		
-     //	carona.setHora(horaPassada);
 		
      	assertEquals(3, sistema.listaDeCaronas.size());
 		sistema.atualizaStatusCaronaRelampago((CaronaRelampago) carona);
 		
 		assertEquals(2, sistema.listaDeCaronas.size());
 		assertEquals(0, caroneiro.getListaDeCaronasQueParticipa().size());
+		
+		
+		// cadastra com 1 vagas e ela eh preenchida
+        String idCarona2 = sistema.cadastrarCaronaRelampago(sessaoMark, "campina", "natal", "20/10/2013", "14:00", "1");
+
+		String idSolicitacao2 = sistema.solicitarVaga(sessaoBill,idCarona2);
+		sistema.aceitarSolicitacao(sessaoMark, idSolicitacao2);
+		
+		Usuario caroneiro2 = sistema.buscaUsuario("bill");
+		
+		assertEquals(1, sistema.buscaUsuario("bill").getListaDeCaronasQueParticipa().size());
+		assertEquals(3, sistema.buscaUsuario("mark").getListaDeCaronasDoUsuario().size());
+		
+        Carona carona2 = sistema.buscaCaronaID(idCarona2);
+        carona2.setData(dataPassada);
+        
+        assertEquals(3, sistema.listaDeCaronas.size());
+		assertEquals(1, caroneiro.getListaDeCaronasQueParticipa().size());
+		
+		
 		
 			
 	}
