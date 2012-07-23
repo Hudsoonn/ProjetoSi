@@ -5,6 +5,7 @@
     <nome>Mark Zuckerberg</nome>
     <endereco>Palo Alto, California</endereco>
     <email>mark@facebook.com</email>
+    <id>69def6e3-49a5-43de-a95c-76638ac5e291</id>
     <listaDeCaronasQueParticipa/>
     <listaDeCaronasDoUsuario/>
     <listaDeMensagens/>
@@ -22,6 +23,7 @@
     <nome>Steven Paul Jobs</nome>
     <endereco>Palo Alto, California</endereco>
     <email>jobs@apple.com</email>
+    <id>da54f653-aaf7-457f-bf41-00142030c97f</id>
     <listaDeCaronasQueParticipa/>
     <listaDeCaronasDoUsuario/>
     <listaDeMensagens/>
@@ -39,6 +41,7 @@
     <nome>William Henry Gates III</nome>
     <endereco>Medina, Washington</endereco>
     <email>bil@apple.com</email>
+    <id>9c20417f-7d7f-4c5f-a023-d14792b3e6d0</id>
     <listaDeCaronasQueParticipa/>
     <listaDeCaronasDoUsuario/>
     <listaDeMensagens/>

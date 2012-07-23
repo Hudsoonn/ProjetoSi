@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public class TrataDatas {
 	
-public static boolean isDataValida(String dataRecebida) {
+public static boolean isDataValida(String dataRecebida,String hora) {
 		
 		boolean dataBoolean = true;
 		Calendar calendar = new GregorianCalendar();
@@ -27,8 +27,12 @@ public static boolean isDataValida(String dataRecebida) {
 			int mes = Integer.parseInt(arrayDataRecebida[1])-1;
 			int dia = Integer.parseInt(arrayDataRecebida[0]);
 			
-			calendar.set(ano,mes,dia);
+			int h = Integer.parseInt(hora.split(":")[0]);
+			int m = Integer.parseInt(hora.split(":")[1]);
 			
+			calendar.set(ano,mes,dia);
+			calendar.set(calendar.HOUR_OF_DAY, h);
+			calendar.set(calendar.MINUTE, m);
 	
            if (calendar.before(calendar2)) {
 				dataBoolean = false;

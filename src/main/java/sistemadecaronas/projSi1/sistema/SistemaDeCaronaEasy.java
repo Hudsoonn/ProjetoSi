@@ -215,14 +215,15 @@ public class SistemaDeCaronaEasy {
 		if (destino == null || destino.equals("")) {
 			throw new Exception("Destino inválido");
 		}
-
-		if (data == null || data.equals("") || !TrataDatas.isDataValida(data)) {
-			throw new Exception("Data inválida");
-		}
-
+		
 		if (hora == null || hora.equals("") || !TrataDatas.horaValida(hora)) {
 			throw new Exception("Hora inválida");
 		}
+
+		if (data == null || data.equals("") || !TrataDatas.isDataValida(data,hora)) {
+			throw new Exception("Data inválida");
+		}
+
 
 		if (vagas == null || vagas.equals("")) {
 			throw new Exception("Vaga inválida");
@@ -290,6 +291,19 @@ public class SistemaDeCaronaEasy {
 			if (listaDeUsuarios.get(i).getLogin().equals(login)) {
 				return listaDeUsuarios.get(i);
 			}
+		}
+		return null;
+	}
+	
+	public Usuario buscaUsuarioId(String id) {
+		for (int i = 0; i < listaDeUsuarios.size(); i++) {
+			
+			if (id != null) {
+			if (listaDeUsuarios.get(i).getId().equals(id)) {
+				
+				return listaDeUsuarios.get(i);
+			}
+		  }
 		}
 		return null;
 	}
@@ -371,7 +385,7 @@ public class SistemaDeCaronaEasy {
 			if(caronaEhDeInteresse(carona, interesse))
 			{   
 				String loginDonoCarona = buscarSessaoId(idDaSessao).getLogin();
-				String loginCaroneiro = buscarSessaoId(interesse.getIdSessao()).getLogin();
+				String loginCaroneiro = buscaUsuarioId((interesse.getIdSessao())).getLogin();
 				Conteudo conteudo =  new ConteudoTexto(String.format(mensagensDoSistema.MENSAGEM_INTERESSE.getMensagem(),data,hora,buscaUsuario(loginDonoCarona).getEmail()));
 				Mensagem mensagem = new Mensagem(loginDonoCarona, loginCaroneiro, conteudo);
 				

@@ -152,7 +152,7 @@ public class TesteSistema {
 			sistema.cadastrarCarona(sessaoMark, "Campina Grande",
 					"Joao Pessoa", "20/07/2013", "14:00", "");
 		} catch (Exception e) {
-			assertEquals("Vaga inválida", e.getMessage());
+			assertEquals("Número de vagas inválido", e.getMessage());
 		}
 		sistema.cadastrarCarona(sessaoMark, "origemM", "destino", "12/07/2013",
 				"14:00", "3");
@@ -850,11 +850,25 @@ public class TesteSistema {
 	@Test	
 	public void testaCaronaRelampago() throws Exception{
 		
+		try {
+			String idCarona = sistema.cadastrarCaronaRelampago(sessaoMark, "campina", "natal", "20/10/2013", "14:00","3","0");
+		} catch (Exception e) {
+			assertEquals("Número minimo de vagas inválido", e.getMessage());
+		}
+		
+		try {
+			String idCarona = sistema.cadastrarCaronaRelampago(sessaoMark, "campina", "natal", "20/10/2013", "14:00","1","2");
+		} catch (Exception e) {
+			assertEquals("O número de vagas é menor que o número minimo de vagas", e.getMessage());
+		}
+		
+		
+		
 		
 		assertEquals(2, sistema.buscaUsuario("mark").getListaDeCaronasDoUsuario().size());
 		
 		// cadastra com 2 vagas e so uma eh preenchida
-		String idCarona = sistema.cadastrarCaronaRelampago(sessaoMark, "campina", "natal", "20/10/2013", "14:00", "2");
+		String idCarona = sistema.cadastrarCaronaRelampago(sessaoMark, "campina", "natal", "20/10/2013", "14:00","3","2");
 
 		
 		String idSolicitacao = sistema.solicitarVaga(sessaoBill,idCarona);
@@ -888,7 +902,7 @@ public class TesteSistema {
 		
 		
 		// cadastra com 1 vagas e ela eh preenchida
-        String idCarona2 = sistema.cadastrarCaronaRelampago(sessaoMark, "campina", "natal", "20/10/2013", "14:00", "1");
+        String idCarona2 = sistema.cadastrarCaronaRelampago(sessaoMark, "campina", "natal", "20/10/2013", "14:00","1","1");
 
 		String idSolicitacao2 = sistema.solicitarVaga(sessaoBill,idCarona2);
 		sistema.aceitarSolicitacao(sessaoMark, idSolicitacao2);
@@ -932,8 +946,11 @@ public class TesteSistema {
 		}
 	    calendar.set(calendar.HOUR_OF_DAY, calendar.get(calendar.HOUR_OF_DAY)-3);
 	    String dataAtual = calendar.get(calendar.DAY_OF_MONTH)+"/"+(calendar.get(calendar.MONTH)+1)+"/"+calendar.get(calendar.YEAR);
-      
+       
+	    String hora = calendar.get(calendar.HOUR_OF_DAY)+":"+calendar.get(calendar.MINUTE);
+	    
 	    carona.setData(dataAtual);
+	    carona.setHora(hora);
 	    
 	    sistema.reviewCarona(sessaoBill, idCarona4, "segura e tranquila");
 	    
@@ -1012,10 +1029,6 @@ public class TesteSistema {
 	
 	
 
-	
-	
-	
-	
 	
 	
 	

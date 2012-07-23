@@ -25,6 +25,8 @@ public class TesteFachada {
 	    files.add("testes/US10.txt");
 		files.add("testes/US11.txt");
 		files.add("testes/US12.txt");
+		//files.add("testes/US15.txt");
+		//files.add("testes/US16.txt");
 		Fachada siTeste = new Fachada();
 		// Instantiate EasyAccept façade
 		EasyAcceptFacade eaFacade = new EasyAcceptFacade(siTeste, files);

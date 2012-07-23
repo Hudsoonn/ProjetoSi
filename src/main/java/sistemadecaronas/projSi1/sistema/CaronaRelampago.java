@@ -8,7 +8,7 @@ import java.util.UUID;
 public class CaronaRelampago implements Carona{
 	
 	private String origem, destino, data, hora, idCarona;
-	private int nMinimoCaroneiros;
+	private int vagas,nMinimoCaroneiros;
 	private final String TIPO_CARONA = "Relampago";	
 	private Usuario donoDaCarona;
 	private List<Solicitacao> listaDeSolicitacaoAceitas = new ArrayList<Solicitacao>();
@@ -25,16 +25,18 @@ public class CaronaRelampago implements Carona{
 	
 	
 	
-	public CaronaRelampago(String origem, String destino, String data, String hora, int nMinimoCaroneiros){
+	public CaronaRelampago(String origem, String destino, String data, String hora,int vagas, int nMinimoCaroneiros){
 		this.origem = origem;
 		this.destino = destino;
 		this.data = data;
 		this.hora = hora;
+		this.vagas = vagas;
 		this.nMinimoCaroneiros = nMinimoCaroneiros;
 		idCarona = UUID.randomUUID().toString();
 	
 	
 	}
+
 
 	public String tipoDeCarona() {
 
@@ -135,13 +137,21 @@ public class CaronaRelampago implements Carona{
 
 	public int getVagas() {
 
-		return nMinimoCaroneiros;
+		return vagas;
 	}
 
 	public void setVagas(int vagas) {
 		
-		this.nMinimoCaroneiros = vagas;
+		this.vagas = vagas;
 		
+	}
+	
+	public int getnMinimoCaroneiros() {
+		return nMinimoCaroneiros;
+	}
+
+	public void setnMinimoCaroneiros(int nMinimoCaroneiros) {
+		this.nMinimoCaroneiros = nMinimoCaroneiros;
 	}
 
 	public void addSolicitacao(Solicitacao solicitacao) {

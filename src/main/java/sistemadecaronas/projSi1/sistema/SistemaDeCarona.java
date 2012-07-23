@@ -10,11 +10,13 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import javax.mail.MessagingException;
 
+import sistemadecaronas.projSi1.auxiliar.MergeSort;
 import sistemadecaronas.projSi1.auxiliar.TrataDatas;
 import sistemadecaronas.projSi1.auxiliar.TrataEmail;
 import sistemadecaronas.projSi1.persistencia.SalvaDados;
@@ -109,7 +111,7 @@ public class SistemaDeCarona {
 		if (senha == null || senha.equals("")) {
 			throw new Exception("Senha inválida");
 		}
-
+         
 		if (buscaUsuario(login) != null) {
 			if (buscaUsuario(login).getSenha().equals(senha)) {
 				for (Sessao sessao : listaDeSessoesAbertas) {
@@ -177,17 +179,18 @@ public class SistemaDeCarona {
 		if (destino == null || destino.equals("")) {
 			throw new DestinoInvalidoException("Destino inválido");
 		}
-
-		if (data == null || data.equals("") || !TrataDatas.isDataValida(data)) {
-			throw new DataInvalidaException("Data inválida");
-		}
-
+		
 		if (hora == null || hora.equals("") || !TrataDatas.horaValida(hora)) {
 			throw new HoraInvalidaException("Hora inválida");
 		}
 
+		if (data == null || data.equals("") || !TrataDatas.isDataValida(data,hora)) {
+			throw new DataInvalidaException("Data inválida");
+		}
+
+
 		if (vagas == null || vagas.equals("")) {
-			throw new Exception("Vaga inválida");
+			throw new VagaInvalidaException("Número de vagas inválido");
 		} else {
 
 			try {
@@ -197,7 +200,7 @@ public class SistemaDeCarona {
 				}
 			} catch (Exception e) {
 		
-				throw new Exception("número de vagas inválido");
+				throw new VagaInvalidaException("Número de vagas inválido");
 			}
 		}
 		
@@ -213,6 +216,35 @@ public class SistemaDeCarona {
 	}
 
 
+	}
+	
+	public void excecaoCriacaoCaronaRelampago(String nMinimoCaroneiros,String vagas) throws Exception{
+		
+		int nMinVagas = 0;
+		
+		if (nMinimoCaroneiros == null || nMinimoCaroneiros.equals("")) {
+			
+			throw new VagaInvalidaException("Número minimo de vagas inválido");
+		}else{
+			
+			try {
+			   nMinVagas = Integer.parseInt(nMinimoCaroneiros);
+			   if (nMinVagas <= 0) {
+				throw new Exception();
+			  }
+			} catch (Exception e) {
+				
+				throw new VagaInvalidaException("Número minimo de vagas inválido");
+			}
+			
+		}	
+		
+		int nVagas = Integer.parseInt(vagas);
+	    if (nVagas < nMinVagas) {
+			throw new VagaInvalidaException("O número de vagas é menor que o número minimo de vagas");
+		}
+
+		
 	}
     
 	/**
@@ -297,6 +329,19 @@ public class SistemaDeCarona {
 		}
 		return null;
 	}
+	
+	public Usuario buscaUsuarioId(String id) {
+		for (int i = 0; i < listaDeUsuarios.size(); i++) {
+			
+			if (id != null) {
+			if (listaDeUsuarios.get(i).getId().equals(id)) {
+				
+				return listaDeUsuarios.get(i);
+			}
+		  }
+		}
+		return null;
+	}
     
 	/**
 	 * 
@@ -353,12 +398,14 @@ public class SistemaDeCarona {
 
 	}
 	
-	public String cadastrarCaronaRelampago(String idSessao, String origem, String destino, String data, String hora, String nMinimoCaroneiros) throws Exception{
+	public String cadastrarCaronaRelampago(String idSessao, String origem, String destino, String data, String hora,String vagas, String nMinimoCaroneiros) throws Exception{
 		       
-        excecaoDeCriacaoDeCarona(idSessao, origem, destino, data, hora, nMinimoCaroneiros);
+        excecaoDeCriacaoDeCarona(idSessao, origem, destino, data, hora, vagas);
+		excecaoCriacaoCaronaRelampago(nMinimoCaroneiros, vagas);
+        
 		Sessao sessao = buscarSessaoId(idSessao);
 		
-		Carona novaCarona = new CaronaRelampago(origem, destino, data,hora, Integer.parseInt(nMinimoCaroneiros));
+		Carona novaCarona = new CaronaRelampago(origem, destino, data,hora,Integer.parseInt(vagas), Integer.parseInt(nMinimoCaroneiros));
 		novaCarona.setDonoDaCarona(buscaUsuario(sessao.getLogin()));
 		listaDeCaronas.add(novaCarona);//
 		listaDeCaronasRelampago.add((CaronaRelampago) novaCarona);
@@ -570,13 +617,15 @@ public class SistemaDeCarona {
      */
 	private void verificaInteresse(String idDaSessao, String origem,
 			String destino, String data, String hora) throws Exception {
+		
 		Carona carona = new CaronaIntermunicipal(origem, destino, data, hora, 0);
 		for(Interesse interesse : listaDeInteresses)
 		{
 			if(caronaEhDeInteresse(carona, interesse))
 			{   
 				String loginDonoCarona = buscarSessaoId(idDaSessao).getLogin();
-				String loginCaroneiro = buscarSessaoId(interesse.getIdSessao()).getLogin();
+				System.out.println(interesse.getIdSessao());
+				String loginCaroneiro = buscaUsuarioId(interesse.getIdSessao()).getLogin();
 				Conteudo conteudo =  new ConteudoTexto(String.format(mensagensDoSistema.MENSAGEM_INTERESSE.getMensagem(),data,hora,buscaUsuario(loginDonoCarona).getEmail()));
 				Mensagem mensagem = new Mensagem(loginDonoCarona, loginCaroneiro, conteudo);
 				
@@ -1987,6 +2036,27 @@ public class SistemaDeCarona {
 		return interesse.getIdInteresse();
 	}
 	
+	public List<String> rankCrescenteCaroneiros(){
+		
+	   int[] pontuacaoDosUsuarios = new int[listaDeUsuarios.size()];
+	   int cont = 0;
+	   for (Usuario usuario : listaDeUsuarios) {
+		   pontuacaoDosUsuarios[cont] = usuario.getCaronasSeguras();
+		   cont++;
+	   }
+		
+       List<String> listaRankCrescente = new LinkedList<String>();
+       
+       for (String string : listaRankCrescente) {
+		
+	}
+		
+		
+		
+		return null;
+		
+	}
+	
 	/**
 	 * metodo que lanca excecoes ao cadastrar interesse
 	 * @param idSessao
@@ -2051,14 +2121,61 @@ public class SistemaDeCarona {
 		
 		SistemaDeCarona s = SistemaDeCarona.getInstanceOf();
 		
-		System.out.println(s.passouNumeroDeHoras("24/06/2012", "00:41", 48));
+		
+		s.reiniciarSistema();
+		for (Usuario usuario : s.listaDeUsuarios) {
+			s.abrirSessao(usuario.getLogin(), usuario.getSenha());
+		}
+		
+		s.salvaUsuarios();
+		Usuario usuario = s.buscaUsuario("mark");
+		Usuario usuario2 = s.buscaUsuario("bill");
+		s.listaDeInteresses.clear();
+		s.salvaInteresses();
+		s.cadastrarInteresse(usuario.getId(), "", "", "", "","");
+		
+		String idCarona = s.cadastrarCarona(usuario2.getId(), "campina", "caruaru", "24/07/2012", "13:00", "3");
+		String idSolicitacao = s.solicitarVaga(usuario.getId(), idCarona);
+		s.aceitarSolicitacao(usuario2.getId(), idSolicitacao);
+		System.out.println(usuario.getListaDeMensagens());
+		
+		GregorianCalendar gc = new GregorianCalendar();
+		
+		gc.set(gc.DAY_OF_YEAR, gc.get(gc.DAY_OF_YEAR)-3);
+		
+		String data = gc.get(gc.DAY_OF_MONTH)+"/"+((gc.get(gc.MONTH))+1)+"/"+gc.get(gc.YEAR);
+		System.out.println(data);
+		Carona carona = s.buscaCaronaID(idCarona);
+		carona.setData(data);
+		
+		System.out.println(MergeSort.mergeSort(s.listaDeUsuarios).get(0).getListaReviewPositivos().size());
+		s.reviewCarona(usuario.getId(), idCarona, "segura e tranquila");
+		s.reviewVagaEmCarona(usuario2.getId(), idCarona, "bill", "não faltou");
+		System.out.println(MergeSort.mergeSort(s.listaDeUsuarios).get(2).getListaReviewPositivos().size());
+		
+		
+		
+	
+
+
+	//	System.out.println(MergeSort.mergeSort(s.listaDeUsuarios).get(0).getNome());
+		
+	//	Usuario usuario2 = s.buscaUsuario("mark");
+	//	s.abrirSessao("mark", "m@rk");
+		
+	//	Usuario usuario = s.buscaUsuario("bill");
+	//	s.abrirSessao("bill", "severino");
+	//	s.cadastrarCarona(usuario.getId(), "campina", "caruaru", "21/08/2012", "14:00", "1");
+		
+		
+		/*System.out.println(s.passouNumeroDeHoras("24/06/2012", "00:41", 48));
 		
 		s.criarUsuario("Hud", "123", "sfs", "ed", "a@g.com");
 		s.criarUsuario("Hud2", "123", "sfs", "ed", "ab@g.com");
 		String id = s.abrirSessao("Hud", "123");
 		String id2 = s.abrirSessao("Hud2", "123");
 		
-		String idCarona = s.cadastrarCaronaRelampago(id, "s", "d", "24/06/2012", "00:40", "2");
+		String idCarona = s.cadastrarCaronaRelampago(id, "s", "d", "24/06/2012", "00:40","3","2");
 		
 		String idSolicitacao = s.solicitarVaga(id2, idCarona);
 		s.aceitarSolicitacao(id, idSolicitacao);
@@ -2067,7 +2184,7 @@ public class SistemaDeCarona {
 		
 		s.atualizaStatusCaronaRelampago((CaronaRelampago) s.buscaCaronaID(idCarona));
 		
-		System.out.println(s.listaDeCaronas.size());
+		System.out.println(s.listaDeCaronas.size());*/
 		
 		
 		
