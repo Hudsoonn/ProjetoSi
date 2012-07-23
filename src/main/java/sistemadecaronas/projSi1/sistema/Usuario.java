@@ -24,6 +24,7 @@ public class Usuario {
 	private ArrayList<Carona> historicoVagasEmCaronas;
 	private ArrayList<Carona> historicoCaronas;
 	private ArrayList<Usuario> listaReviewPositivos;
+	private int pontuacao;
 
 	public Usuario(String login, String senha, String nome, String endereco,
 			String email) throws Exception {
@@ -43,6 +44,7 @@ public class Usuario {
 		this.caronasNaoFuncionaram = 0;
 		this.faltasEmCaronas = 0;
 		this.presencaEmCaronas = 0;
+		this.pontuacao = 0;
 		
 
 	}
@@ -197,6 +199,15 @@ public class Usuario {
 	public void addQuemDeuReviewPositivo(Usuario usuario){
 		
 		listaReviewPositivos.add(usuario);
+		this.pontuacao++;
+	}
+	
+	public void diminuiPontuacao(){
+		pontuacao--;
+	}
+	public int getPontuacao(){
+		
+		return pontuacao;
 	}
 	public ArrayList<Usuario> getListaReviewPositivos() {
 		return listaReviewPositivos;

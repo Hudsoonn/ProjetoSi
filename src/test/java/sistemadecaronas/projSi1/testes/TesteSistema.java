@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.*;
 
+import sistemadecaronas.projSi1.auxiliar.MergeSort;
 import sistemadecaronas.projSi1.sistema.Carona;
 import sistemadecaronas.projSi1.sistema.CaronaRelampago;
 import sistemadecaronas.projSi1.sistema.ConteudoTexto;
@@ -1026,6 +1027,98 @@ public class TesteSistema {
 	          
 		
 	}
+	
+	@Test
+	
+	public void testaRankCrescente() throws Exception{
+		
+       
+		Usuario usuario = sistema.buscaUsuario("bill");
+	
+		
+		String idCarona = sistema.cadastrarCarona(sessaoBill, "campina", "recife", "12/12/2013", "13:00", "2");
+		
+		String idSolicitacao = sistema.solicitarVaga(sessaoMark, idCarona);
+		
+		sistema.aceitarSolicitacao(sessaoBill, idSolicitacao);
+		
+        String idSolicitacao2 = sistema.solicitarVaga(sessaoSteve, idCarona);
+		
+		sistema.aceitarSolicitacao(sessaoBill, idSolicitacao2);
+			
+		
+		GregorianCalendar gc = new GregorianCalendar();
+		
+		gc.set(gc.DAY_OF_YEAR, gc.get(gc.DAY_OF_YEAR)-2);
+		
+		String data = gc.get(gc.DAY_OF_MONTH)+"/"+((gc.get(gc.MONTH))+1)+"/"+gc.get(gc.YEAR);
+		System.out.println(data);
+		Carona carona = sistema.buscaCaronaID(idCarona);
+		carona.setData(data);
+	
+		
+		assertEquals(0, usuario.getListaReviewPositivos().size());
+		
+		assertEquals("mark", sistema.rankCrescente().get(0).getLogin());
+		
+		sistema.reviewCarona(sessaoMark, idCarona, "segura e tranquila");
+		
+		assertEquals(1, usuario.getPontuacao());
+		
+		assertEquals("bill", sistema.rankCrescente().get(0).getLogin());
+		
+		sistema.reviewCarona(sessaoSteve, idCarona, "não funcionou");
+		
+		assertEquals(0, usuario.getPontuacao());
+        
+
+		assertEquals("mark", sistema.rankCrescente().get(0).getLogin());
+		
+		
+		
+	}
+	
+	@Test
+	
+	public void testaRankDecrescente() throws Exception{
+	
+		
+		Usuario usuario = sistema.buscaUsuario("bill");
+	  
+		
+		String idCarona = sistema.cadastrarCarona(sessaoBill, "campina", "recife", "12/12/2013", "13:00", "2");
+		
+		String idSolicitacao = sistema.solicitarVaga(sessaoMark, idCarona);
+		
+		sistema.aceitarSolicitacao(sessaoBill, idSolicitacao);
+		
+        String idSolicitacao2 = sistema.solicitarVaga(sessaoSteve, idCarona);
+		
+		sistema.aceitarSolicitacao(sessaoBill, idSolicitacao2);
+			
+		
+		GregorianCalendar gc = new GregorianCalendar();
+		
+		gc.set(gc.DAY_OF_YEAR, gc.get(gc.DAY_OF_YEAR)-3);
+		
+		String data = gc.get(gc.DAY_OF_MONTH)+"/"+((gc.get(gc.MONTH))+1)+"/"+gc.get(gc.YEAR);
+		System.out.println(data);
+		Carona carona = sistema.buscaCaronaID(idCarona);
+		carona.setData(data);
+		
+		assertEquals("bill", sistema.rankDecrescente().get(0).getLogin());
+		
+		assertEquals(0, usuario.getPontuacao());
+		sistema.reviewCarona(sessaoMark, idCarona, "não funcionou");
+		assertEquals(-1, usuario.getPontuacao());
+		assertEquals("bill", sistema.rankDecrescente().get(0).getLogin());
+
+		sistema.reviewCarona(sessaoSteve, idCarona, "não funcionou");
+		assertEquals(-2, usuario.getPontuacao());
+
+	
+	}
+	
 	
 	
 

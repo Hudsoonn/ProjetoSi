@@ -32,7 +32,7 @@ import sistemadecaronas.projSi1.sistema.Usuario;
 		List<Usuario> listaRetorno = new LinkedList<Usuario>();
 
 		while(indiceEsq < esquerda.size() && indiceDir < direita.size()){
-			if(esquerda.get(indiceEsq).getCaronasSeguras() < direita.get(indiceDir).getCaronasSeguras()){
+			if(esquerda.get(indiceEsq).getPontuacao() < direita.get(indiceDir).getPontuacao()){
 				listaRetorno.add(indiceEsq + indiceDir, esquerda.get(indiceEsq));
 				indiceEsq ++;
 				continue;

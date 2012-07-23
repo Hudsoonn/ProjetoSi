@@ -1976,6 +1976,7 @@ public class SistemaDeCarona {
 			    else if(review.equals("não funcionou")){
 			    	Review  rv = new Review(caroneiro, TIPO_REVIEW_RUIM);
 				    carona.addReview(rv);
+				    donoDaCarona.diminuiPontuacao();
 				    if (reviewValido(carona)) {
 				    	donoDaCarona.addCaronasNaoFuncionaram();
 					}
@@ -2036,26 +2037,33 @@ public class SistemaDeCarona {
 		return interesse.getIdInteresse();
 	}
 	
-	public List<String> rankCrescenteCaroneiros(){
+	public List<Usuario> rankCrescente(){
 		
-	   int[] pontuacaoDosUsuarios = new int[listaDeUsuarios.size()];
-	   int cont = 0;
-	   for (Usuario usuario : listaDeUsuarios) {
-		   pontuacaoDosUsuarios[cont] = usuario.getCaronasSeguras();
-		   cont++;
-	   }
+	   
+	List<Usuario> listaOrdemCrescente = new ArrayList<Usuario>();	
+	List<Usuario> listaOrdemCrescenteAux = MergeSort.mergeSort(listaDeUsuarios);
+	
+	for (Usuario usuario : listaOrdemCrescenteAux) {
+		listaOrdemCrescente.add(0, usuario);
+	}
+	
+	
+				
+		return listaOrdemCrescente;
 		
-       List<String> listaRankCrescente = new LinkedList<String>();
-       
-       for (String string : listaRankCrescente) {
 		
 	}
+	
+	
+	public List<Usuario> rankDecrescente(){
 		
+		   
+		  List<Usuario> listaOrdemCrescente = MergeSort.mergeSort(listaDeUsuarios);
 		
-		
-		return null;
-		
-	}
+			
+			return listaOrdemCrescente;
+			
+		}
 	
 	/**
 	 * metodo que lanca excecoes ao cadastrar interesse
@@ -2137,7 +2145,7 @@ public class SistemaDeCarona {
 		String idCarona = s.cadastrarCarona(usuario2.getId(), "campina", "caruaru", "24/07/2012", "13:00", "3");
 		String idSolicitacao = s.solicitarVaga(usuario.getId(), idCarona);
 		s.aceitarSolicitacao(usuario2.getId(), idSolicitacao);
-		System.out.println(usuario.getListaDeMensagens());
+		System.out.println(usuario.getListaDeMensagens().get(0).getConteudo().getConteudo());
 		
 		GregorianCalendar gc = new GregorianCalendar();
 		
@@ -2151,7 +2159,8 @@ public class SistemaDeCarona {
 		System.out.println(MergeSort.mergeSort(s.listaDeUsuarios).get(0).getListaReviewPositivos().size());
 		s.reviewCarona(usuario.getId(), idCarona, "segura e tranquila");
 		s.reviewVagaEmCarona(usuario2.getId(), idCarona, "bill", "não faltou");
-		System.out.println(MergeSort.mergeSort(s.listaDeUsuarios).get(2).getListaReviewPositivos().size());
+		System.out.println(s.rankCrescente().get(1).getLogin());
+		
 		
 		
 		
