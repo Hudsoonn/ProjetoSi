@@ -441,7 +441,7 @@ public class SistemaDeCarona {
 		if (passouNumeroDeHoras(carona.getData(), carona.getHora(), TEMPO_MAXIMO_CARONA_RELAMPAGO) && carona.getVagas() != 0) {
 			
 			carona.setCaronaExpired();
-		//	enviaEmailCaronaRelampago(carona);
+			enviaEmailCaronaRelampago(carona);
 			cancelarCarona(carona.getDonoDaCarona().getId(), carona.getIdDaCarona());
 			
 		}
@@ -976,7 +976,7 @@ public class SistemaDeCarona {
 	 */
 	public void excecaoCidade(String cidade) throws Exception
 	{
-		if(cidade == null || cidade.equals(""))
+		if(cidade == null)
 			throw new Exception("Cidade inexistente");
 	}
     
@@ -1342,11 +1342,11 @@ public class SistemaDeCarona {
 			carona.addParticipante(usuarioQueSolicitou);
 			
 
-		//	enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi aceita!.");
+			enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi aceita!.");
 
 			}else{		
 	
-	    //    	enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi rejeitada por falta de vagas.");
+	        	enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi rejeitada por falta de vagas.");
 				throw new Exception("solicitacao rejeitada por falta de vagas");		
 			}
 		}
@@ -1380,10 +1380,10 @@ public class SistemaDeCarona {
 				usuarioQueSolicitou.addCaronaQueParticipa(carona);
 				carona.addParticipante(usuarioQueSolicitou);
                	
-			//    enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi aceita!.");
+			    enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi aceita!.");
 			}else{
 	
-			//	enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi rejeitada por falta de vagas.");
+				enviaEmail(idSessao, usuarioQueSolicitou.getEmail(), "sua solicitacao na carona: "+getInformacoesCarona(carona.getIdDaCarona())+" foi rejeitada por falta de vagas.");
 				throw new Exception("solicitacao rejeitada por falta de vagas");
 			}
 		}
